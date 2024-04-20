@@ -1,0 +1,125 @@
+{{define "title"}}Home{{end}}
+
+
+{{define "main"}}
+{{$Disconnected := .Disconnected}}
+<div id="bar-filter">
+    {{ if .Disconnected }}
+    <form action="/logout" method="GET">
+        {{ else }}
+        <form action="/" method="GET">
+            {{end}}
+            <div class="checkFilter">
+                <label for="fliked">
+                    <input type="checkbox" name="filterCheck" value="Liked-Post" id="fliked">
+                    <span>My Liked Posts</span>
+                </label>
+                <label for="fposted">
+                    <input type="checkbox" name="filterCheck" value="Created-Post" id="fposted">
+                    <span>My Created Posts</span>
+                </label>
+            </div>
+            <div class="checkCategory">
+                {{ range .Categores }}
+                <label for="{{ .Name }}">
+                    <input type="checkbox" name="filterCategoryCheck" id="{{ .Name }}" value="{{ .Name }}">
+                    <span>{{ .Name }}</span>
+                </label>
+                {{ end }}
+            </div>
+            <input type="submit" name="filter" value="valid">
+        </form>
+</div>
+
+<div id="list-post">
+    {{ range .PostsInfo }}
+    <div class="post" id="{{ .Post_id }}">
+        <div class="p">
+            <div class="hinfo">
+                <p>Publié par : <span>{{ .Username }}</span></p>
+                <p>Date Heure UTC : <span>{{ .Creation_Date }}</span></p>
+            </div>
+            <div class="hcontent">
+                <ul>
+                    {{ range .Categories }}
+                    <li> {{.}} </li>
+                    {{ end }}
+                </ul>
+                <p style:="overflow-wrap:break-word;">
+                    {{ .Content }}
+                </p>
+            </div>
+            {{ if $Disconnected }}
+            <form action="\logout" method="get">
+                {{ else }}
+                <form action="\" method="post">
+                    {{end}}
+                    <div style="display: none;">
+                        <input type="text" name="postId" value="{{.Post_id}}">
+                    </div>
+                    <div class="haction">
+                        <div class="like">
+                            <button name="like" value="{{.LikeActualUser}}" type="submit">
+                                {{if eq .Active 1}}
+                                <span><i class="fa-regular fa-thumbs-up" style="color:green;"></i></span>
+                                {{else}}
+                                <span><i class="fa-regular fa-thumbs-up"></i></span>
+                                {{end}}
+                            </button>
+                            <span> {{.Like_Number}} </span>
+                        </div>
+                        <div class="dislike">
+                            <button name="dislike" value="{{.DislikeActualUser}}" type="submit">
+                                {{if eq .Active 2}}
+                                <span><i class="fa-regular fa-thumbs-down" style="color:red;"></i></span>
+                                {{else}}
+                                <span><i class="fa-regular fa-thumbs-down"></i></span>
+                                {{end}}
+
+                            </button>
+                            <span> {{.Dislike_Number}} </span>
+                        </div>
+                        <div class="comment">
+                            <a href="/comment?{{ .Post_id }}">
+                                <span><i class="fa-regular fa-comments"></i></span>
+                            </a>
+                            <span>{{ .Comment_Number}} </span>
+                        </div>
+                    </div>
+                </form>
+        </div>
+        {{ if ne .ImageName ""}}
+        <div class="p-img">
+            <img src="/static/uploads/{{ .ImageName }}" alt="image de post">
+        </div>
+        {{end}}
+    </div>
+    {{ end }}
+
+    {{ if .BadRequestForm }}
+    <h5 class="Error">Désolé, nous n'avons trouvé aucun post repondant a ce(s) critère(s)</h5>
+    {{ end }}
+</div>
+{{end}}
+
+
+{{ define "section" }}
+<div>
+    <h2>About Us <code>&#9940;</code></h2>
+    <p>
+        Les gars, les gars... <code>&#128683;</code> <code>&#128683;</code> <code>&#9888;</code> <br />
+        Tout fail a ce forum sera condamné sous peine de mort.
+        En cas de fail, Vous avez le droit de garder le silence.
+        Tout ce que vous direz pourra être retenu contre vous devant un tribunal.
+        Vous avez le droit à un avocat. Si vous n'avez pas les moyens de
+        vous en offrir un, un avocat vous sera désigné d'office.
+    </p>
+</div>
+<div>
+    <h4>Copyrigths <code>&#169;</code></h4>
+    <p>
+        2024 Tous droits réservés <code>&#128512;</code> realisé avec du <code>&#128150;</code> et un peu de
+        <code>&#9749;</code>
+    </p>
+</div>
+{{ end }}

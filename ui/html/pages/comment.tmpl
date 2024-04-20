@@ -1,0 +1,132 @@
+{{ define "title"}}Comment{{end}}
+
+
+{{ define "main" }}
+{{ $Disconnected := .Disconnected }}
+{{ $PostInfoPost_id := .PostInfo.Post_id }}
+<div id="list-post">
+
+    {{ with .PostInfo }}
+    <div class="post post-comment" id="{{ .Post_id }}">
+        <div class="p">
+            <div class="hinfo">
+                <p>Publié par : <span>{{ .Username }}</span></p>
+                <p>Date Heure UTC : <span>{{ .Creation_Date }}</span></p>
+            </div>
+            <div class="hcontent">
+                <ul>
+                    {{ range .Categories }}
+                    <li> {{.}} </li>
+                    {{ end }}
+                </ul>
+                <p style="overflow-wrap:break-word;">
+                    {{ .Content }}
+                </p>
+            </div>
+            <div class="p-img">
+                <img src="/static/uploads/{{ .ImageName }}" alt="image de post">
+            </div>
+
+            {{ if $Disconnected }}
+            <form action="/logout" method="get">
+                {{ else }}
+                <form action="/comment?{{ .Post_id }}" method="post">
+                    {{end}}
+                    <div style="display: none;">
+                        <input type="text" name="postId" value="{{.Post_id}}">
+                    </div>
+                    <div class="haction">
+                        <div class="like">
+                            <button name="like" value="{{.LikeActualUser}}" type="submit">
+                                {{if eq .Active 1}}
+                                <span><i class="fa-regular fa-thumbs-up" style="color:blue;"></i></span>
+                                {{else}}
+                                <span><i class="fa-regular fa-thumbs-up"></i></span>
+                                {{end}}
+                            </button>
+                            <span> {{.Like_Number}} </span>
+                        </div>
+                        <div class="dislike">
+                            <button name="dislike" value="{{.DislikeActualUser}}" type="submit">
+                                {{if eq .Active 2}}
+                                <span><i class="fa-regular fa-thumbs-down" style="color:red;"></i></span>
+                                {{else}}
+                                <span><i class="fa-regular fa-thumbs-down"></i></span>
+                                {{end}}
+                            </button>
+                            <span> {{.Dislike_Number}} </span>
+                        </div>
+                    </div>
+                </form>
+        </div>
+    </div>
+    {{ end }}
+
+</div>
+
+{{ if $Disconnected }}
+<form action="/logout" method="get" id="form-comment">
+    {{ else }}
+    <form action="/comment?{{.PostInfo.Post_id}}" method="post" id="form-comment">
+        {{end}}
+        <textarea name="comment" rows="1" placeholder="Ajouter un commentaire"></textarea>
+        <button name="send-comment" type="submit">
+            <i class="fa-regular fa-paper-plane"></i>
+        </button>
+    </form>
+
+    <div id="comments">
+        {{ range .CommentsInfo }}
+        <div class="c" id="{{ .Comment_id }}">
+            <div class="cinfo">
+                <p>Commenté par : <span>{{ .Username }}</span></p>
+                <p>Le <span>{{ .Date_Creation }}</span></p>
+            </div>
+            <div class="ccontent">
+                <p style="overflow-wrap:break-word;">
+                    {{ .Comment }}
+                </p>
+            </div>
+            {{ if $Disconnected }}
+            <form action="/logout" method="get">
+                {{ else }}
+                <form action="/comment?{{ $PostInfoPost_id  }}" method="post">
+                    {{end}}
+                    <input type="hidden" name="commentId" value="{{ .Comment_id }}">
+                    <div class="caction">
+                        <div class="like">
+                            <button type="submit" name="likeComment" value="{{ .LikeActualUser }}">
+                                <span><i class="fa-regular fa-thumbs-up"></i></span>
+                                <span> {{ .Like_Number }} </span>
+                            </button>
+                        </div>
+                        <div class="dislike">
+                            <button type="submit" name="dislikeComment" value="{{ .DislikeActualUser }}">
+                                <span><i class="fa-regular fa-thumbs-down"></i></span>
+                                <span> {{ .Dislike_Number }} </span>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+        </div>
+        {{ end }}
+    </div>
+    {{ end }}
+    {{ define "section" }}
+    <div>
+        <h2>Why comment <code>&#128172;</code></h2>
+        <p>
+            Lorem ipsum dolor sit amet consectetur, adipisicing elit.
+            Asperiores sapiente doloremque eligendi optio consectetur
+            voluptas nam earum. Natus quo, ratione numquam qui consequatur
+            dolores.
+        </p>
+    </div>
+    <div>
+        <h4>Copyriths <code>&#169;</code></h4>
+        <p>
+            2024 Tous droits réservés <code>&#128512;</code> realisé avec du <code>&#128150;</code> et un peu de
+            <code>&#9749;</code>
+        </p>
+    </div>
+    {{ end }}

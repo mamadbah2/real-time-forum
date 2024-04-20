@@ -1,0 +1,22 @@
+{{ define "title" }}Login{{ end }}
+
+{{define "form"}}
+<main id="register-login-main">
+    <form class="form" method="post">
+        <div class="title">
+            Forum.01,<br>
+            <span><a href="/register">tu n'as pas de compte ?</a></span>
+            {{ if .BadRequestForm }}
+            <h5 class="Error" style="font-size: .7em;">
+                Invalid email or password
+            </h5>
+            {{end}}
+        </div>
+        <input class="input" name="email" placeholder="Email" type="email">
+        <input class="input" name="password" placeholder="Password" type="password">
+        
+        <button class="button-confirm">Let`s go →</button>
+    </form>
+
+</main>
+{{end}}

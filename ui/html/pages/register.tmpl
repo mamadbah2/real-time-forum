@@ -1,0 +1,23 @@
+{{ define "title" }}Login{{ end }}
+
+{{ define "form"}}
+<main id="register-login-main">
+    <form class="form" method="post">
+        <div class="title">
+            Forum.01,<br>
+            <span><a href="/login">t'as déjà un compte ?</a></span>
+            {{ if .BadRequestForm }}
+                <h5 class="Error" style="font-size: .7em;">
+                    Incorrect or already exist information
+                </h5>
+            {{end}}
+        </div>
+        <input class="input" name="username" placeholder="username" type="username">
+        <input class="input" name="email" placeholder="Email" type="email">
+        <input class="input" name="password" placeholder="Password" type="password">
+
+        <button class="button-confirm">Let`s go →</button>
+    </form>
+
+</main>
+{{ end }}

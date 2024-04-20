@@ -1,0 +1,54 @@
+{{define "title"}}Create-Post{{end}}
+
+
+{{define "main"}}
+
+<form id="post-form" method="post" action="/create" enctype="multipart/form-data">
+    {{if .BadRequestForm}}
+    <h5 class="Error">Veiller entrer de bonnes valeurs aux champs</h5>
+    {{end}}
+    <div class="checkCategory">
+        {{ range .Categores}}
+        <label for="{{.Name}}">
+            <input type="checkbox" name="categorCheck" value="{{.Category_id}}" id="{{.Name}}">
+            <span> {{.Name}} </span>
+        </label>
+        {{end}}
+    </div>
+    <!-- upload-img -->
+    <div class="container">
+        <input type="file" name="imagePost" id="file" accept="image/*" hidden>
+        <div class="img-area" data-img="">
+            <i class="fa-solid fa-circle-up icon"></i>
+            <h3>Upload Image</h3>
+            <p>Image size must be less than <span>20MB</span></p>
+        </div>
+        <button class="select-image">upload</button>
+    </div>
+    <!-- upload-img -->
+    <div id="area-text">
+        <textarea name="content" placeholder="Taper un post ici"></textarea>
+    </div>
+    <input type="submit" name="createPost" value="Creer">
+</form>
+
+{{end}}
+
+{{ define "section" }}
+<div>
+    <h2>#POST <code>&#128204;</code></h2>
+    <p>
+        Lorem ipsum dolor sit amet consectetur, adipisicing elit.
+        Asperiores sapiente doloremque eligendi optio consectetur
+        voluptas nam earum. Natus quo, ratione numquam qui consequatur
+        dolores.
+    </p>
+</div>
+<div>
+    <h4>Copyriths <code>&#169;</code></h4>
+    <p>
+        2024 Tous droits réservés <code>&#128512;</code> realisé avec du <code>&#128150;</code> et un peu de
+        <code>&#9749;</code>
+    </p>
+</div>
+{{ end }}
