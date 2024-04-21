@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"errors"
 	"net/http"
 	"path/filepath"
@@ -93,6 +94,19 @@ func (app *application) render(w http.ResponseWriter, r *http.Request, layout, p
 	}
 }
 
-func (app *application) renderJSON(w http.ResponseWriter, r *http.Request) {
-	
+func (app *application) renderJSON(w http.ResponseWriter, r *http.Request, data *TemplateData) {
+	// Transformation de toutes les données en json
+	dataByte, err := json.Marshal(data)
+	if err != nil {
+		app.serverError(w, r, err)
+		return
+	}
+
+	// Ecriture dans le w (ResponseWritter)
+	w.Header().Set("Content-Type", "application/json")
+	_, err = w.Write(dataByte)
+	if err != nil {
+		app.serverError(w, r, err)
+		return
+	}
 }

@@ -88,7 +88,8 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 
 		data := &TemplateData{Categores: categories, PostsInfo: postsInfo, BadRequestForm: badRequest, Disconnected: disconnected}
 
-		app.render(w, r, "base", "home", data)
+		// app.render(w, r, "base", "home", data)
+		app.renderJSON(w, r, data)
 
 	case http.MethodPost:
 		if disconnected {
@@ -154,7 +155,8 @@ func (app *application) create(w http.ResponseWriter, r *http.Request) {
 		bad := r.URL.Query().Has("bad")
 		data := &TemplateData{Categores: categories, BadRequestForm: bad}
 
-		app.render(w, r, "base", "form", data)
+		// app.render(w, r, "base", "form", data)
+		app.renderJSON(w, r, data)
 
 	case http.MethodPost:
 		err := r.ParseForm()
@@ -286,7 +288,8 @@ func (app *application) comment(w http.ResponseWriter, r *http.Request) {
 		}
 
 		data := &TemplateData{PostInfo: postInfo, CommentsInfo: commentsInfo, Disconnected: disconnected}
-		app.render(w, r, "base", "comment", data)
+		// app.render(w, r, "base", "comment", data)
+		app.renderJSON(w, r, data)
 
 	case http.MethodPost:
 		err := r.ParseForm()
@@ -394,7 +397,8 @@ func (app *application) login(w http.ResponseWriter, r *http.Request) {
 		bad := r.URL.Query().Has("bad")
 		data := &TemplateData{BadRequestForm: bad}
 
-		app.render(w, r, "baseLogRegis", "login", data)
+		// app.render(w, r, "baseLogRegis", "login", data)
+		app.renderJSON(w, r, data)
 
 	case http.MethodPost:
 		err := r.ParseForm()
@@ -460,7 +464,8 @@ func (app *application) register(w http.ResponseWriter, r *http.Request) {
 		}
 		bad := r.URL.Query().Has("bad")
 		data := &TemplateData{BadRequestForm: bad}
-		app.render(w, r, "baseLogRegis", "register", data)
+		// app.render(w, r, "baseLogRegis", "register", data)
+		app.renderJSON(w, r, data)
 
 	case http.MethodPost:
 		err := r.ParseForm()
