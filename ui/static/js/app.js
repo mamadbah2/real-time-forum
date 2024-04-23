@@ -1,3 +1,4 @@
-import { fetchTest } from "./services.js";
+import { customLogin } from "./pages/login.js";
+import { customHeader } from "./portion/header.js";
 
-fetchTest()
+customElements.define('custom-header', customHeader)

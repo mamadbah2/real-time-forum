@@ -54,7 +54,7 @@ body #website {
     font-size: .9em;
 }
 
-header {
+custom-header {
     position: -webkit-sticky;
     position: sticky;
     top: 0;
@@ -65,11 +65,11 @@ header {
     height: 100vh;
 }
 
-header h1 {
+custom-header h1 {
     font-size: 1.2em;
 }
 
-header #logo {
+custom-header #logo {
     width: 100%;
     margin: 0;
 }
@@ -78,7 +78,7 @@ header #logo {
     width: 100%;
 }
 
-header #online {
+custom-header #online {
     width: 90%;
     margin: 8px auto;
     padding: 15px 10px;
@@ -89,32 +89,32 @@ header #online {
 
 }
 
-header #online p {
+custom-header #online p {
     padding: 3px;
     overflow-x: scroll;
 }
 
-header #online h4 {
+custom-header #online h4 {
     padding: 0;
 }
 
-header #online h4,
-header #online p {
+custom-header #online h4,
+custom-header #online p {
     margin: 2px;
     text-align: center;
 }
 
-header #online .connected {
+custom-header #online .connected {
     color: rgb(8, 191, 8);
 }
 
-header nav {
+custom-header nav {
     display: flex;
     flex-direction: column;
     margin: 40px auto;
 }
 
-header nav>span {
+custom-header nav>span {
     display: block;
     padding: 10px 15px;
     margin: 5px auto;
@@ -122,18 +122,18 @@ header nav>span {
     background-color: #fff
 }
 
-header nav>span a {
+custom-header nav>span a {
     color: var(--bg-header);
     text-decoration: none;
     font-size: .9em;
     font-weight: bold;
 }
 
-header #logout {
+custom-header #logout {
     background-color: red;
 }
 
-header #logout a {
+custom-header #logout a {
     color: #fff;
 }
 
@@ -640,7 +640,7 @@ main #post-form .select-image {
 }
 
 @media screen and (max-width: 600px) {
-    header {
+    custom-header {
         width: 150px;
     }
 
@@ -650,7 +650,7 @@ main #post-form .select-image {
 }
 
 @media screen and (max-width: 400px) {
-    header {
+    custom-header {
         width: 100px;
     }
 
