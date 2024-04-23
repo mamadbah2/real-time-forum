@@ -25,7 +25,7 @@ export class customHeader extends HTMLElement {
 </nav>
     `;
         this.displayHome()
-        this.makeEventListener()
+        this.#makeEventListener()
 
     }
 
@@ -33,8 +33,6 @@ export class customHeader extends HTMLElement {
         const data = await fetches('home')
         const online = this.querySelector('#online')
         const logout = this.querySelector('#logout')
-        console.log(data)
-
         if (data.Disconnected) {
             online.innerHTML = `
                 <h4>Bienvenue </h4>
@@ -46,14 +44,13 @@ export class customHeader extends HTMLElement {
 
     }
 
-    makeEventListener() {
+    #makeEventListener() {
         const body = document.querySelector('body')
-        console.log(this.querySelector('#logout'));
         this.querySelector('#logout').addEventListener('click', (e) => {
             e.preventDefault()
             const loginCustomNode = document.createElement('custom-login')
             body.appendChild(loginCustomNode);
-            customElements.define('custom-login', customLogin)
+            if (!customElements.get('custom-login')) customElements.define('custom-login', customLogin)
             body.querySelector('#website custom-header').remove()
         })
     }
