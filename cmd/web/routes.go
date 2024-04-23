@@ -9,7 +9,8 @@ func (app *application) routes() http.Handler {
 	router.Handle("/static/", http.StripPrefix("/static", fs))
 
 	// Here all of routes
-	router.HandleFunc("/", app.home)
+	router.HandleFunc("/", app.indexSPA)
+	router.HandleFunc("/home", app.home)
 	router.HandleFunc("/create", app.create)
 	router.HandleFunc("/comment", app.comment)
 	router.HandleFunc("/login", app.login)

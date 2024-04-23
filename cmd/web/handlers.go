@@ -16,8 +16,12 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+func (app *application) indexSPA(w http.ResponseWriter, r *http.Request) {
+	app.renderLayoutSPA(w, r)
+}
+
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/" {
+	if r.URL.Path != "/home" {
 		w.WriteHeader(http.StatusNotFound)
 		app.notFound(w, r, http.StatusNotFound)
 		return
@@ -90,6 +94,7 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 
 		// app.render(w, r, "base", "home", data)
 		app.renderJSON(w, r, data)
+		// app.renderLayoutSPA(w, r)
 
 	case http.MethodPost:
 		if disconnected {
@@ -129,7 +134,7 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 				app.serverError(w, r, err)
 			}
 		}
-		http.Redirect(w, r, "/", http.StatusSeeOther)
+		http.Redirect(w, r, "/home", http.StatusSeeOther)
 
 	default:
 		app.clientError(w, r, http.StatusMethodNotAllowed)

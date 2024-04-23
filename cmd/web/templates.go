@@ -110,3 +110,19 @@ func (app *application) renderJSON(w http.ResponseWriter, r *http.Request, data 
 		return
 	}
 }
+
+
+func (app *application) renderLayoutSPA(w http.ResponseWriter, r *http.Request) {
+	file := []string{"./ui/html/index.html"}
+	tmpl, err := template.ParseFiles(file...)
+	if err != nil {
+		app.serverError(w, r, err)
+		return
+	}
+	w.Header().Set("Content-Type", "text/html")
+	err = tmpl.Execute(w, nil)
+	if err != nil {
+		app.serverError(w, r, err)
+		return
+	}
+}
