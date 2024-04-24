@@ -1,3 +1,4 @@
+import { FilterForm } from "../pages/home.js";
 import { customLogin } from "../pages/login.js";
 import { fetches } from "../services.js";
 
@@ -5,24 +6,47 @@ export class customHeader extends HTMLElement {
 
     connectedCallback() {
         this.innerHTML = `
-      <div id="logo">
-    <img src="/static/img/forum_logo.gif" alt="logo">
-</div>
-<div id="online">
+            <div id="haut">
+                <div id="logo">
+                    <img src="/static/img/forum_logo.gif" alt="logo">
+                </div>
+                <div id="online">
 
-</div>
+                </div>
 
-<nav>
-    <span>
-        <a href="/create">Ajouter un post</a>
-    </span>
-    <span>
-        <a href="/">Liste Postes</a>
-    </span>
-    <span id="logout">
-        <a href="/logout">Logout</a>
-    </span>
-</nav>
+                <nav>
+                    <span>
+                        <a href="/create">Ajouter un post</a>
+                    </span>
+                    <span>
+                        <a href="/">Liste Postes</a>
+                    </span>
+                    <span id="logout">
+                        <a href="/logout">Logout</a>
+                    </span>
+                </nav>
+            </div>
+
+            <div id="bas">
+                <div>
+                    <h2>About Us <code>&#9940;</code></h2>
+                    <p>
+                        Les gars, les gars... <code>&#128683;</code> <code>&#128683;</code> <code>&#9888;</code> <br />
+                        Tout fail a ce forum sera condamné sous peine de mort.
+                        En cas de fail, Vous avez le droit de garder le silence.
+                        Tout ce que vous direz pourra être retenu contre vous devant un tribunal.
+                        Vous avez le droit à un avocat. Si vous n'avez pas les moyens de
+                        vous en offrir un, un avocat vous sera désigné d'office.
+                    </p>
+                    </div>
+                    <div>
+                    <h4>Copyrigths <code>&#169;</code></h4>
+                    <p>
+                        2024 Tous droits réservés <code>&#128512;</code> realisé avec du <code>&#128150;</code> et un peu de
+                        <code>&#9749;</code>
+                    </p>
+                    </div>
+            </div>
     `;
         this.displayHome()
         this.#makeEventListener()
@@ -42,7 +66,7 @@ export class customHeader extends HTMLElement {
             logout.innerHTML = `<a href="">Login</a>`;
         }
 
-    }
+    } 
 
     #makeEventListener() {
         const body = document.querySelector('body')

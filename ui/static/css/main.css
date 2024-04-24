@@ -28,7 +28,7 @@ body #website {
     font-size: 1em;
 }
 
-#website>section {
+#website>#bas {
     position: -webkit-sticky;
     position: sticky;
     top: 0;
@@ -44,17 +44,17 @@ body #website {
     justify-content: space-between;
 }
 
-#website>section div {
+#website>#bas div {
     padding: 10px;
     text-align: center;
     box-shadow: 1px -1px 10px #fff;
 }
 
-#website>section div p {
+#website>#bas div p {
     font-size: .9em;
 }
 
-custom-header {
+#haut {
     position: -webkit-sticky;
     position: sticky;
     top: 0;
@@ -65,11 +65,11 @@ custom-header {
     height: 100vh;
 }
 
-custom-header h1 {
+ h1 {
     font-size: 1.2em;
 }
 
-custom-header #logo {
+ #logo {
     width: 100%;
     margin: 0;
 }
@@ -78,7 +78,7 @@ custom-header #logo {
     width: 100%;
 }
 
-custom-header #online {
+#haut  #online {
     width: 90%;
     margin: 8px auto;
     padding: 15px 10px;
@@ -89,32 +89,32 @@ custom-header #online {
 
 }
 
-custom-header #online p {
+#haut  #online p {
     padding: 3px;
     overflow-x: scroll;
 }
 
-custom-header #online h4 {
+#haut  #online h4 {
     padding: 0;
 }
 
-custom-header #online h4,
-custom-header #online p {
+#haut  #online h4,
+#haut  #online p {
     margin: 2px;
     text-align: center;
 }
 
-custom-header #online .connected {
+#haut  #online .connected {
     color: rgb(8, 191, 8);
 }
 
-custom-header nav {
+#haut nav {
     display: flex;
     flex-direction: column;
     margin: 40px auto;
 }
 
-custom-header nav>span {
+#haut  nav>span {
     display: block;
     padding: 10px 15px;
     margin: 5px auto;
@@ -122,18 +122,18 @@ custom-header nav>span {
     background-color: #fff
 }
 
-custom-header nav>span a {
+#haut  nav>span a {
     color: var(--bg-header);
     text-decoration: none;
     font-size: .9em;
     font-weight: bold;
 }
 
-custom-header #logout {
+#haut  #logout {
     background-color: red;
 }
 
-custom-header #logout a {
+#haut  #logout a {
     color: #fff;
 }
 
@@ -640,21 +640,21 @@ main #post-form .select-image {
 }
 
 @media screen and (max-width: 600px) {
-    custom-header {
+    #haut  {
         width: 150px;
     }
 
-    #website>section {
+    #website>#bas {
         width: 150px;
     }
 }
 
 @media screen and (max-width: 400px) {
-    custom-header {
+    #haut {
         width: 100px;
     }
 
-    #website>section {
+    #website>#bas {
         display: none;
     }
 }

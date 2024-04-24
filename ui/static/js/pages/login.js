@@ -39,7 +39,14 @@ export class customRegister extends HTMLElement {
             Forum.01,<br>
             <span><a href="">t'as déjà un compte ?</a></span>
         </div>
-        <input class="input" name="username" placeholder="username" type="username">
+        <input class="input" name="nickname" placeholder="Nickname" type="username">
+        <input class="input" name="age" placeholder="Age" type="date">
+        <select class="input" name="gender" placeholder="Gender">
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+        </select>
+        <input class="input" name="firstname" placeholder="First Name" type="username">
+        <input class="input" name="lastname" placeholder="Last Name" type="username">
         <input class="input" name="email" placeholder="Email" type="email">
         <input class="input" name="password" placeholder="Password" type="password">
 
