@@ -33,7 +33,7 @@ type application struct {
 	}
 */
 func main() {
-	PORT := flag.String("addr", ":4000", "enter port")
+	PORT := flag.String("addr", ":4444", "enter port")
 	flag.Parse()
 
 	infoLog := log.New(os.Stdout, "INFO\t", log.Ltime|log.Lmicroseconds)
