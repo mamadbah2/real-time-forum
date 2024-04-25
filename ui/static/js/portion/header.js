@@ -1,4 +1,5 @@
 import { customLogin } from "../pages/login.js";
+import { PostForm } from "../pages/post.js";
 import { fetches } from "../services.js";
 
 export class customHeader extends HTMLElement {
@@ -14,7 +15,7 @@ export class customHeader extends HTMLElement {
                 </div>
 
                 <nav>
-                    <span>
+                    <span id="postcreate">
                         <a href="/create">Ajouter un post</a>
                     </span>
                     <span>
@@ -55,6 +56,16 @@ export class customHeader extends HTMLElement {
             if (!customElements.get('custom-login')) customElements.define('custom-login', customLogin)
             body.querySelector('#website').innerHTML = ''
         })
+        
+        this.querySelector('#postcreate').addEventListener('click', (e) => {
+            e.preventDefault()
+            console.log("bobo");
+            const postForm = document.createElement('post-form')
+            body.appendChild(postForm)
+            if (!customElements.get('post-form')) customElements.define('post-form', PostForm)
+            body.querySelector('#website').innerHTML = ''
+
+        });
     }
 
 }
