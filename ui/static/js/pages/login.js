@@ -1,5 +1,10 @@
 export class customLogin extends HTMLElement {
     connectedCallback() {
+        this.constructLogin();
+        this.#makeEventListener();
+    }
+
+    constructLogin() {
         this.innerHTML = `
         <main id="register-login-main">
     <form class="form" method="post">
@@ -15,8 +20,6 @@ export class customLogin extends HTMLElement {
 
 </main>
         `;
-
-        this.#makeEventListener();
     }
 
     #makeEventListener() {

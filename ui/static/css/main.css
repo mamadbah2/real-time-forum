@@ -28,7 +28,7 @@ body #website {
     font-size: 1em;
 }
 
-#website>#bas {
+#website custom-section {
     position: -webkit-sticky;
     position: sticky;
     top: 0;
@@ -44,13 +44,13 @@ body #website {
     justify-content: space-between;
 }
 
-#website>#bas div {
+#website custom-section div {
     padding: 10px;
     text-align: center;
     box-shadow: 1px -1px 10px #fff;
 }
 
-#website>#bas div p {
+#website custom-section div p {
     font-size: .9em;
 }
 
@@ -144,6 +144,12 @@ main {
     overflow-y: scroll;
     flex: 1;
     background: url("/static/img/mainbg.jpeg") fixed;
+}
+
+custom-home {
+    display: block;
+    width: 100%;
+    height: fit-content;
 }
 
 main #webError {
@@ -644,7 +650,7 @@ main #post-form .select-image {
         width: 150px;
     }
 
-    #website>#bas {
+    #website custom-section {
         width: 150px;
     }
 }
@@ -654,7 +660,7 @@ main #post-form .select-image {
         width: 100px;
     }
 
-    #website>#bas {
+    #website custom-section {
         display: none;
     }
 }
