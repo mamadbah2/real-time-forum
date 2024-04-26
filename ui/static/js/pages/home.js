@@ -60,6 +60,7 @@ class FilterForm extends HTMLElement {
 class ListPost extends HTMLElement {
     connectedCallback() {
         this.postInformation()
+        
     }
 
     async postInformation() {
@@ -111,7 +112,21 @@ class ListPost extends HTMLElement {
     </div>
             `}).join('')}
             </div>
-            `
+            `;
+
+            this.#makeEventListener()
+    }
+
+    #makeEventListener() {
+        // Ici dorenavant vu qu'il y a plusieurs evenement à definir, on écrira des fonctions dans la methode.
+        const btns = this.querySelectorAll('button')
+        console.log(btns);
+        btns.forEach((btn) => {
+            btn.addEventListener('click', (e)=>{
+                e.preventDefault()
+            })
+        })
+
     }
 
 }
