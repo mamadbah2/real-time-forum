@@ -1,6 +1,6 @@
 import { customLogin } from "../pages/login.js";
 import { PostForm } from "../pages/post.js";
-import { fetches } from "../services.js";
+import { disconnected, fetches, invokeTag } from "../services.js";
 
 export class customHeader extends HTMLElement {
 
@@ -36,6 +36,7 @@ export class customHeader extends HTMLElement {
         const data = await fetches('home')
         const online = this.querySelector('#online')
         const logout = this.querySelector('#logout')
+        disconnected = data.Disconnected
         if (data.Disconnected) {
             online.innerHTML = `
                 <h4>Bienvenue </h4>
@@ -48,21 +49,17 @@ export class customHeader extends HTMLElement {
     } 
 
     #makeEventListener() {
-        const body = document.querySelector('body')
         this.querySelector('#logout').addEventListener('click', (e) => {
-            e.preventDefault()
-            const loginCustomNode = document.createElement('custom-login')
-            body.appendChild(loginCustomNode);
-            if (!customElements.get('custom-login')) customElements.define('custom-login', customLogin)
-            body.querySelector('#website').innerHTML = ''
+            invokeTag('custom-login')
         })
         
         this.querySelector('#postcreate').addEventListener('click', (e) => {
             e.preventDefault()
-            const postForm = document.createElement('post-form')
-            body.appendChild(postForm)
-            if (!customElements.get('post-form')) customElements.define('post-form', PostForm)
-            body.querySelector('#website').innerHTML = ''
+            if (!disconnected) {
+                invokeTag('post-form')
+            } else {
+                invokeTag('custom-login')
+            }
 
         });
     }

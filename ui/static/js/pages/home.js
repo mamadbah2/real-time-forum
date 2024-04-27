@@ -1,4 +1,4 @@
-import { fetches } from "../services.js"
+import { disconnected, fetches, invokeTag } from "../services.js"
 
 export class HomeSection extends HTMLElement {
     connectedCallback() {
@@ -119,13 +119,19 @@ class ListPost extends HTMLElement {
     #makeEventListener() {
         // Ici dorenavant vu qu'il y a plusieurs evenement à definir, on écrira des fonctions dans la methode.
         const btns = this.querySelectorAll('button')
-        const body = document.querySelector('body')
+        const commentBtns = this.querySelectorAll('.comment a')
         btns.forEach((btn) => {
             btn.addEventListener('click', (e)=>{
-                e.preventDefault()
-                body.appendChild(document.createElement('custom-login'));
-                // if (!customElements.get('custom-login')) customElements.define('custom-login', customLogin)
-                body.querySelector('#website').innerHTML = ''
+                if (disconnected) {
+                    invokeTag('custom-login')
+                }
+            })
+        })
+        commentBtns.forEach((cbtn)=> {
+            cbtn.addEventListener('click', (e)=>{
+                if (disconnected) {
+                    invokeTag('custom-login')
+                }
             })
         })
 
