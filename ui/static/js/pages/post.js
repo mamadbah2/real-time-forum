@@ -3,25 +3,26 @@ import { fetches } from "../services.js";
 export class PostForm extends HTMLElement {
     connectedCallback() {
         this.renderForm()
+        this.fetchCategories()
+        // this.#attachEventListeners()
     }
 
     async fetchCategories() {
         const creatData = await fetches('home')
-        return creatData.Categores.map(category => `
-            <label for="${category.name}">
-                <input type="checkbox" name="categorCheck" value="${category.id}" id="${category.name}">
-                <span>${category.name}</span>
+        document.querySelector('.checkCategory').innerHTML = ` ${creatData.Categores.map(category => `
+            <label for="${category.Name}">
+                <input type="checkbox" name="categorCheck" value="${category.Name}" id="${category.Name}">
+                <span>${category.Name}</span>
             </label>
-        `).join('');
+        `).join('')}`
     }
 
     async renderForm() {
-        const categories = await this.fetchCategories()
         this.innerHTML = `
             <main>
                 <form id="post-form" method="post" enctype="multipart/form-data">
                     <div class="checkCategory">
-                        ${categories}
+
                     </div>
                     <!-- upload-img -->
                     <div class="container">
@@ -47,7 +48,19 @@ export class PostForm extends HTMLElement {
     #attachEventListeners() {
         this.querySelector('.select-image').addEventListener('click', (e) => {
             e.preventDefault()
+            const fileInput = this.querySelector('input[type="file"]');
+            fileInput.click(); // Ouvrir la boîte de dialogue pour sélectionner un fichier
+        });
+
+        // Écoutez l'événement "change" sur l'élément input[type="file"]
+        this.querySelector('input[type="file"]').addEventListener('change', (event) => {
+            // Gérez la sélection de l'image ici
+            const selectedFile = event.target.files[0]; // Obtenez le fichier sélectionné
+            console.log('Image sélectionnée :', selectedFile);
+            // Vous pouvez maintenant traiter le fichier sélectionné comme vous le souhaitez, par exemple l'afficher dans un aperçu, l'envoyer au serveur, etc.
         });
     }
+
+
 }
 
