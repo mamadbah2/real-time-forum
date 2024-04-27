@@ -59,7 +59,6 @@ export class customHeader extends HTMLElement {
         
         this.querySelector('#postcreate').addEventListener('click', (e) => {
             e.preventDefault()
-            console.log("bobo");
             const postForm = document.createElement('post-form')
             body.appendChild(postForm)
             if (!customElements.get('post-form')) customElements.define('post-form', PostForm)
