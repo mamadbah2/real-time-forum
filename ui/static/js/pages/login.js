@@ -74,52 +74,52 @@ export class customRegister extends HTMLElement {
         })
     }
 
-//     registerUser = async (userData) => {
-//         try {
-//             const response = await fetches('register', {
-//                 method: 'POST',
-//                 headers: {
-//                     'Content-Type': 'application/json'
-//                 },
-//                 body: JSON.stringify(userData)
-//             })
-//             if (!response.ok) {
-//                 throw new Error('Failed to register user')
-//             }
-//             const responseData = await response.json()
-//             console.log(responseData);
-//             return responseData // Vous pouvez retourner des informations supplémentaires de l'utilisateur enregistré, si nécessaire
-//         } catch (error) {
-//             console.error('Error registering user:', error)
-//             throw error
-//         }
-//     }
-//     #registereventlister() {
-//         document.querySelector('#register-login-main').addEventListener('submit', async (event) => {
-//             event.preventDefault()
+    /* registerUser = async (userData) => {
+        try {
+            const response = await fetches('register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(userData)
+            })
+            if (!response.ok) {
+                throw new Error('Failed to register user')
+            }
+            const responseData = await response.json()
+            console.log(responseData);
+            return responseData // Vous pouvez retourner des informations supplémentaires de l'utilisateur enregistré, si nécessaire
+        } catch (error) {
+            console.error('Error registering user:', error)
+            throw error
+        }
+    }
+    #registereventlister() {
+        document.querySelector('#register-login-main').addEventListener('submit', async (event) => {
+            event.preventDefault()
 
-//             // Récupérer les valeurs des champs du formulaire
-//             const formData = new FormData(event.target)
-//             const userData = Object.fromEntries(formData.entries())
+            // Récupérer les valeurs des champs du formulaire
+            const formData = new FormData(event.target)
+            const userData = Object.fromEntries(formData.entries())
 
-//             try {
-//                 // Ajouter les champs supplémentaires au userData
-//                 userData.nickname = formData.get('nickname')
-//                 userData.age = formData.get('age')
-//                 userData.gender = formData.get('gender')
-//                 userData.firstname = formData.get('firstname')
-//                 userData.lastname = formData.get('lastname')
-//                 userData.email = formData.get('email')
-//                 userData.password = formData.get('password')
+            try {
+                // Ajouter les champs supplémentaires au userData
+                userData.nickname = formData.get('nickname')
+                userData.age = formData.get('age')
+                userData.gender = formData.get('gender')
+                userData.firstname = formData.get('firstname')
+                userData.lastname = formData.get('lastname')
+                userData.email = formData.get('email')
+                userData.password = formData.get('password')
 
-//                 // Envoyer les données à l'API
-//                 await registerUser(userData)
-//                 console.log("bingo");
-//                 return
-//                 // Rediriger l'utilisateur vers la page de connexion ou afficher un message de succès
-//             } catch (error) {
-//                 // Afficher un message d'erreur à l'utilisateur
-//             }
-//         })
-//     }
+                // Envoyer les données à l'API
+                await registerUser(userData)
+                console.log("bingo");
+                return
+                // Rediriger l'utilisateur vers la page de connexion ou afficher un message de succès
+            } catch (error) {
+                // Afficher un message d'erreur à l'utilisateur
+            }
+        })
+    } */
 }
