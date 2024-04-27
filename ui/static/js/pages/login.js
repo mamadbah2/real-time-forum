@@ -26,7 +26,7 @@ export class customLogin extends HTMLElement {
         this.querySelector('.title span a').addEventListener('click', (e) => {
             e.preventDefault()
             document.querySelector('body').appendChild(document.createElement('custom-register'))
-            if (!customElements.get('custom-register')) customElements.define('custom-register', customRegister)
+            // if (!customElements.get('custom-register')) customElements.define('custom-register', customRegister)
             this.remove()
         })
     }
@@ -66,7 +66,7 @@ export class customRegister extends HTMLElement {
         this.querySelector('.title span a').addEventListener('click', (e) => {
             e.preventDefault()
             document.querySelector('body').appendChild(document.createElement('custom-login'))
-            if (!customElements.get('custom-login')) customElements.define('custom-login', customLogin)
+            // if (!customElements.get('custom-login')) customElements.define('custom-login', customLogin)
             this.remove()
         })
     }

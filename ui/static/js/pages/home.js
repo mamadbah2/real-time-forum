@@ -4,7 +4,6 @@ export class HomeSection extends HTMLElement {
     connectedCallback() {
         if (!customElements.get("custom-filter")) customElements.define("custom-filter", FilterForm)
         if (!customElements.get("custom-posts")) customElements.define("custom-posts", ListPost)
-
         this.innerHTML = `
             <custom-filter></custom-filter>
             <custom-posts></custom-posts>
@@ -120,10 +119,13 @@ class ListPost extends HTMLElement {
     #makeEventListener() {
         // Ici dorenavant vu qu'il y a plusieurs evenement à definir, on écrira des fonctions dans la methode.
         const btns = this.querySelectorAll('button')
-        console.log(btns);
+        const body = document.querySelector('body')
         btns.forEach((btn) => {
             btn.addEventListener('click', (e)=>{
                 e.preventDefault()
+                body.appendChild(document.createElement('custom-login'));
+                // if (!customElements.get('custom-login')) customElements.define('custom-login', customLogin)
+                body.querySelector('#website').innerHTML = ''
             })
         })
 
