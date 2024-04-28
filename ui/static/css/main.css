@@ -409,6 +409,7 @@ main #bar-filter {
 
 /* Login style  */
 
+
 #register-login-main {
     width: 100%;
     height: 100vh;
@@ -454,6 +455,10 @@ main #bar-filter {
 .title span a {
     color: silver;
     text-decoration: underline;
+}
+
+.title em {
+    cursor: pointer;
 }
 
 .input {

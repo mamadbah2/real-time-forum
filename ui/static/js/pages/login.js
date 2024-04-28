@@ -11,7 +11,7 @@ export class customLogin extends HTMLElement {
         <main id="register-login-main">
     <form class="form" method="post">
         <div class="title">
-            Forum.01,<br>
+        <em>Forum.01,</em><br>
             <span><a href="">tu n'as pas de compte ?</a></span>
         </div>
         <input class="input" name="email" placeholder="Email" type="email">
@@ -23,11 +23,22 @@ export class customLogin extends HTMLElement {
 </main>
         `
     }
-
+    
     #makeEventListener() {
+        // Lorqu'on clique sur j'ai pas de compte ca nous renvoie à register
         this.querySelector('.title span a').addEventListener('click', (e) => {
             e.preventDefault()
             document.querySelector('body').appendChild(document.createElement('custom-register'))
+            this.remove()
+        })
+
+        // Lorsqu'on clique sur Forum01 on revient à la page d'accueil
+        this.querySelector('.title em').addEventListener('click', () => {
+            document.querySelector('#website').innerHTML = `<custom-header></custom-header>
+                                                            <main>
+                                                                <custom-home></custom-home>
+                                                            </main>
+                                                            <custom-section></custom-section>`
             this.remove()
         })
     }
@@ -36,11 +47,17 @@ export class customLogin extends HTMLElement {
 
 export class customRegister extends HTMLElement {
     connectedCallback() {
+        this.constructRegister()
+        this.#makeEventListener()
+        // this.#registereventlister()
+    }
+
+    constructRegister() {
         this.innerHTML = `
         <main id="register-login-main">
     <form class="form" method="post">
         <div class="title">
-            Forum.01,<br>
+            <em>Forum.01,</em><br>
             <span><a href="">t'as déjà un compte ?</a></span>
         </div>
             <input class="input" name="nickname" placeholder="Nickname" type="username">
@@ -59,15 +76,23 @@ export class customRegister extends HTMLElement {
 
 </main>
         `
-
-        this.#makeEventListener()
-        // this.#registereventlister()
     }
 
     #makeEventListener() {
+        // Lorqu'on clique sur j'ai déjà un compte ca nous renvoie à login
         this.querySelector('.title span a').addEventListener('click', (e) => {
             e.preventDefault()
             document.querySelector('body').appendChild(document.createElement('custom-login'))
+            this.remove()
+        })
+
+        // Lorsqu'on clique sur Forum01 on revient à la page d'accueil
+        this.querySelector('.title em').addEventListener('click', (e) => {
+            document.querySelector('#website').innerHTML = `<custom-header></custom-header>
+                                                            <main>
+                                                                <custom-home></custom-home>
+                                                            </main>
+                                                            <custom-section></custom-section>`
             this.remove()
         })
     }

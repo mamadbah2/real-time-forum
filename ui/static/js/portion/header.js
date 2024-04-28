@@ -1,6 +1,4 @@
-import { customLogin } from "../pages/login.js";
-import { PostForm } from "../pages/post.js";
-import { disconnected, fetches, invokeTag } from "../services.js";
+import { disconnectedManager, fetches, invokeTag } from "../services.js";
 
 export class customHeader extends HTMLElement {
 
@@ -36,7 +34,7 @@ export class customHeader extends HTMLElement {
         const data = await fetches('home')
         const online = this.querySelector('#online')
         const logout = this.querySelector('#logout')
-        disconnected = data.Disconnected
+        disconnectedManager.setState(data.Disconnected)
         if (data.Disconnected) {
             online.innerHTML = `
                 <h4>Bienvenue </h4>
@@ -50,18 +48,20 @@ export class customHeader extends HTMLElement {
 
     #makeEventListener() {
         this.querySelector('#logout').addEventListener('click', (e) => {
-            invokeTag('custom-login')
+            if (disconnectedManager.getState()) invokeTag('custom-login', e)
         })
         
         this.querySelector('#postcreate').addEventListener('click', (e) => {
-            e.preventDefault()
-            if (!disconnected) {
-                invokeTag('post-form')
+            if (!disconnectedManager.getState()) {
+                invokeTag('post-form', e)
             } else {
-                invokeTag('custom-login')
+                invokeTag('custom-login', e)
             }
-
         });
+
+        this.querySelector('nav span:nth-child(2) > a').addEventListener('click', (e) => {
+            e.preventDefault()
+        })
     }
 
 }

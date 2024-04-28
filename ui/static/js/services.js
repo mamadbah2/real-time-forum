@@ -1,4 +1,12 @@
-export let disconnected = false
+let disconnected = false
+export const disconnectedManager = {
+    getState(){
+        return disconnected
+    },
+    setState(newValue) {
+        disconnected = newValue
+    }
+}
 
 export async function fetches(page) {
     const response = await fetch(`http://0.0.0.0:4000/${page}`, { method: "GET" })
@@ -9,9 +17,9 @@ export async function fetches(page) {
     return data
 }
 
-export function invokeTag(name) {
+export function invokeTag(name, event) {
     const body = document.querySelector('body')
     body.appendChild(document.createElement(name))
     body.querySelector('#website').innerHTML = ''
-    e.preventDefault()
+    event.preventDefault()
 }

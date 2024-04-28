@@ -1,4 +1,5 @@
-import { disconnected, fetches, invokeTag } from "../services.js"
+import { disconnectedManager, fetches, invokeTag } from "../services.js"
+
 
 export class HomeSection extends HTMLElement {
     connectedCallback() {
@@ -122,15 +123,15 @@ class ListPost extends HTMLElement {
         const commentBtns = this.querySelectorAll('.comment a')
         btns.forEach((btn) => {
             btn.addEventListener('click', (e)=>{
-                if (disconnected) {
-                    invokeTag('custom-login')
+                if (disconnectedManager.getState()) {
+                    invokeTag('custom-login', e)
                 }
             })
         })
         commentBtns.forEach((cbtn)=> {
             cbtn.addEventListener('click', (e)=>{
-                if (disconnected) {
-                    invokeTag('custom-login')
+                if (disconnectedManager.getState()) {
+                    invokeTag('custom-login', e)
                 }
             })
         })
