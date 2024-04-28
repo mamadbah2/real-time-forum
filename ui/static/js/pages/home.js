@@ -3,6 +3,10 @@ import { disconnectedManager, fetches, invokeTag } from "../services.js"
 
 export class HomeSection extends HTMLElement {
     connectedCallback() {
+        this.constructHomeSection()
+    }
+
+    constructHomeSection() {
         if (!customElements.get("custom-filter")) customElements.define("custom-filter", FilterForm)
         if (!customElements.get("custom-posts")) customElements.define("custom-posts", ListPost)
         this.innerHTML = `
@@ -28,8 +32,27 @@ class FilterForm extends HTMLElement {
     }
 
     #makeEventListener() {
-        document.querySelector('input[name="filter"]').addEventListener('click', (e) => {
+        const formFilterSubmit = document.querySelector('#bar-filter form input[name="filter"]')
+        formFilterSubmit.addEventListener('click', (e) => {
             e.preventDefault();
+            // Recuperation des valeurs du form
+            const checkedFliked = document.getElementById('fliked').checked
+            const checkedFposted = document.getElementById('fposted').checked
+            // Traitement des valeurs du form
+            const listPostElt = document.querySelector('#list-post')
+            const posts = listPostElt.querySelectorAll('.post')
+            if (checkedFliked) {
+                posts.forEach((post)=> {
+                    let likedElt = post.querySelector('.haction button[name="like"]')
+                    if (likedElt.getAttribute('value')=== 'true') {
+                        listPostElt.removeChild(post)
+                    }
+                })
+            }
+            if (!(checkedFliked || checkedFposted)) {
+                listPostElt.parentElement.remove()
+                document.querySelector('custom-home').appendChild(document.createElement('custom-posts'))
+            }
         })
     }
 
