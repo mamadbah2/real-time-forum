@@ -35,24 +35,65 @@ class FilterForm extends HTMLElement {
         const formFilterSubmit = document.querySelector('#bar-filter form input[name="filter"]')
         formFilterSubmit.addEventListener('click', (e) => {
             e.preventDefault();
+
+            // Reinitialision de tous les posts
+            document.querySelector('custom-posts').remove()
+            document.querySelector('custom-home').appendChild(document.createElement('custom-posts'))
+
             // Recuperation des valeurs du form
             const checkedFliked = document.getElementById('fliked').checked
             const checkedFposted = document.getElementById('fposted').checked
+            const checkCategory = document.querySelectorAll('#bar-filter .checkCategory label')
             // Traitement des valeurs du form
-            const listPostElt = document.querySelector('#list-post')
-            const posts = listPostElt.querySelectorAll('.post')
-            if (checkedFliked) {
-                posts.forEach((post)=> {
-                    let likedElt = post.querySelector('.haction button[name="like"]')
-                    if (likedElt.getAttribute('value')=== 'true') {
-                        listPostElt.removeChild(post)
+
+
+            setTimeout(() => {
+                const listPostElt = document.querySelector('#list-post')
+                console.log(listPostElt.innerHTML)
+                const posts = listPostElt.querySelectorAll('.post')
+                listPostElt.innerHTML = ''
+                console.log(posts)
+                let statusCheck = false
+                checkCategory.forEach((categoryNode) => {
+                    if (categoryNode.querySelector('input').checked) {
+                        statusCheck = true
+                        posts.forEach(post => {
+                            let textCategory = Array.from(post.querySelectorAll('.hcontent ul li')).reduce((acc, node) => {
+                                return acc + node.textContent
+                            }, '');
+                            if (textCategory.includes(categoryNode.getAttribute('for'))) {
+                                listPostElt.appendChild(post)
+
+                            }
+                        });
                     }
                 })
-            }
-            if (!(checkedFliked || checkedFposted)) {
-                listPostElt.parentElement.remove()
-                document.querySelector('custom-home').appendChild(document.createElement('custom-posts'))
-            }
+
+                if (!disconnectedManager.getState()) {
+                    if (checkedFliked) {
+                        posts.forEach((post) => {
+                            let likedElt = post.querySelector('.haction button[name="like"]')
+                            if (likedElt.getAttribute('value') === 'true') {
+                                listPostElt.removeChild(post)
+                            }
+                        })
+                    }
+                    if (checkedFposted) {
+                        posts.forEach((post) => {
+                            let postCreator = post.querySelector('.hinfo > p').textContent
+                            let actualUsername = document.querySelector('#ownerUsername').textContent
+                            if (postCreator !== actualUsername) {
+                                listPostElt.removeChild(post)
+                            }
+                        })
+                    }
+                }
+
+                if (!(checkedFliked || checkedFposted || statusCheck)) {
+                    listPostElt.parentElement.remove()
+                    document.querySelector('custom-home').appendChild(document.createElement('custom-posts'))
+                }
+            }, 25)
         })
     }
 
@@ -83,7 +124,7 @@ class FilterForm extends HTMLElement {
 class ListPost extends HTMLElement {
     connectedCallback() {
         this.postInformation()
-        
+
     }
 
     async postInformation() {
@@ -94,7 +135,7 @@ class ListPost extends HTMLElement {
                 <div class="post" id="${post.Post_id}">
         <div class="p">
             <div class="hinfo">
-                <p>Publié par : <span>{${post.Username}</span></p>
+                <p>Publié par : <span>${post.Username}</span></p>
                 <p>Date Heure UTC : <span>${post.Creation_Date}</span></p>
             </div>
             <div class="hcontent">
@@ -137,7 +178,7 @@ class ListPost extends HTMLElement {
             </div>
             `;
 
-            this.#makeEventListener()
+        this.#makeEventListener()
     }
 
     #makeEventListener() {
@@ -145,14 +186,14 @@ class ListPost extends HTMLElement {
         const btns = this.querySelectorAll('button')
         const commentBtns = this.querySelectorAll('.comment a')
         btns.forEach((btn) => {
-            btn.addEventListener('click', (e)=>{
+            btn.addEventListener('click', (e) => {
                 if (disconnectedManager.getState()) {
                     invokeTag('custom-login', e)
                 }
             })
         })
-        commentBtns.forEach((cbtn)=> {
-            cbtn.addEventListener('click', (e)=>{
+        commentBtns.forEach((cbtn) => {
+            cbtn.addEventListener('click', (e) => {
                 if (disconnectedManager.getState()) {
                     invokeTag('custom-login', e)
                 }

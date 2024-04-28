@@ -7,7 +7,7 @@
     <h4>Bienvenue </h4>
     <p>Vous profitez mieux en etant connecté</p>
     {{ else }}
-    <h4>{{ .UserInfo.Username }} </h4>
+    <h4 id="ownerUsername">{{ .UserInfo.Username }} </h4>
     <p>{{ .UserInfo.Email }} </p>
     <p><strong>Status </strong> <span class="connected">Connected</span></p>
     <p>{{ .UserInfo.LikeCounter }} Like(s) <i class="fa-regular fa-thumbs-up"></i></p>
