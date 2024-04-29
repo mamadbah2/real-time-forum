@@ -482,6 +482,7 @@ func (app *application) register(w http.ResponseWriter, r *http.Request) {
 		username := r.PostForm.Get("username")
 		email := r.PostForm.Get("email")
 		password := r.PostForm.Get("password")
+		fmt.Println("---------", r.PostForm)
 		if !utils.UsernameValidation(username) || !utils.EmailValidation(email) || !utils.PasswordValidation(password) {
 			http.Redirect(w, r, "/register?bad", http.StatusSeeOther)
 			return
@@ -521,6 +522,7 @@ func (app *application) register(w http.ResponseWriter, r *http.Request) {
 			Secure:   true,
 			Expires:  time.Now().Add(60 * time.Minute),
 			HttpOnly: true,
+			SameSite: http.SameSiteNoneMode,
 		}
 		app.Session[u.String()] = userId
 

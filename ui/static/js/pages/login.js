@@ -1,4 +1,4 @@
-import { fetches } from "../services.js"
+import { disconnectedManager, fetches, fetchesPost } from "../services.js"
 
 export class customLogin extends HTMLElement {
     connectedCallback() {
@@ -35,10 +35,10 @@ export class customLogin extends HTMLElement {
         // Lorsqu'on clique sur Forum01 on revient à la page d'accueil
         this.querySelector('.title em').addEventListener('click', () => {
             document.querySelector('#website').innerHTML = `<custom-header></custom-header>
-                                                            <main>
-                                                                <custom-home></custom-home>
-                                                            </main>
-                                                            <custom-section></custom-section>`
+            <main>
+                <custom-home></custom-home>
+            </main>
+            <custom-section></custom-section>`
             this.remove()
         })
     }
@@ -60,18 +60,11 @@ export class customRegister extends HTMLElement {
             <em>Forum.01,</em><br>
             <span><a href="">t'as déjà un compte ?</a></span>
         </div>
-            <input class="input" name="nickname" placeholder="Nickname" type="username">
-            <input class="input" name="age" placeholder="Age" type="date">
-            <select class="input" name="gender" placeholder="Gender">
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-            </select>
-            <input class="input" name="firstname" placeholder="First Name" type="username">
-            <input class="input" name="lastname" placeholder="Last Name" type="username">
-            <input class="input" name="email" placeholder="Email" type="email">
-            <input class="input" name="password" placeholder="Password" type="password">
+        <input class="input" name="username" placeholder="username" type="username">
+        <input class="input" name="email" placeholder="Email" type="email">
+        <input class="input" name="password" placeholder="Password" type="password">
 
-            <button class="button-confirm">Let's go →</button>
+        <button class="button-confirm">Let's go →</button>
     </form>
 
 </main>
@@ -94,6 +87,13 @@ export class customRegister extends HTMLElement {
                                                             </main>
                                                             <custom-section></custom-section>`
             this.remove()
+        })
+
+        // Lorsqu'on soumet le formulaire 
+        this.querySelector('.form').addEventListener('submit', async (e)=> {
+            e.preventDefault()
+            const formData = new FormData(e.target)
+            await fetchesPost('register', formData)
         })
     }
 
