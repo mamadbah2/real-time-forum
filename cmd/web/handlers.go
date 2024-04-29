@@ -414,13 +414,15 @@ func (app *application) login(w http.ResponseWriter, r *http.Request) {
 		email := r.PostForm.Get("email")
 		password := r.PostForm.Get("password")
 		if !utils.EmailValidation(email) || !utils.PasswordValidation(password) {
-			http.Redirect(w, r, "/login?bad", http.StatusSeeOther)
+			// http.Redirect(w, r, "/login?bad", http.StatusSeeOther)
+			app.renderJSON(w, r, &TemplateData{BadRequestForm: true})
 			return
 		}
 
 		user, err := app.connDB.GetUserByMail(email)
 		if err != nil {
-			http.Redirect(w, r, "/login?bad", http.StatusSeeOther)
+			// http.Redirect(w, r, "/login?bad", http.StatusSeeOther)
+			app.renderJSON(w, r, &TemplateData{BadRequestForm: true})
 			return
 		}
 		err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
@@ -447,7 +449,8 @@ func (app *application) login(w http.ResponseWriter, r *http.Request) {
 		app.Session[u.String()] = user.User_id
 		http.SetCookie(w, &cookies)
 
-		http.Redirect(w, r, "/", http.StatusSeeOther)
+		// http.Redirect(w, r, "/", http.StatusSeeOther)
+		app.renderJSON(w, r, &TemplateData{BadRequestForm: false})
 
 	default:
 		app.clientError(w, r, http.StatusBadRequest)
@@ -484,24 +487,28 @@ func (app *application) register(w http.ResponseWriter, r *http.Request) {
 		password := r.PostForm.Get("password")
 		fmt.Println("---------", r.PostForm)
 		if !utils.UsernameValidation(username) || !utils.EmailValidation(email) || !utils.PasswordValidation(password) {
-			http.Redirect(w, r, "/register?bad", http.StatusSeeOther)
+			// http.Redirect(w, r, "/register?bad", http.StatusSeeOther)
+			app.renderJSON(w, r, &TemplateData{BadRequestForm: true})
 			return
 		}
 
 		encryptPass, err := bcrypt.GenerateFromPassword([]byte(password), 12)
 		if err != nil {
-			http.Redirect(w, r, "/register?bad", http.StatusSeeOther)
+			// http.Redirect(w, r, "/register?bad", http.StatusSeeOther)
+			app.renderJSON(w, r, &TemplateData{BadRequestForm: true})
 			return
 		}
 		password = string(encryptPass)
 		userId, err := app.connDB.SetUser(username, email, password)
 		if err != nil {
 			if err.Error() == "UNIQUE constraint failed: User.username" {
-				http.Redirect(w, r, "/register?bad", http.StatusSeeOther)
+				// http.Redirect(w, r, "/register?bad", http.StatusSeeOther)
+				app.renderJSON(w, r, &TemplateData{BadRequestForm: true})
 				return
 			}
 			if err.Error() == "UNIQUE constraint failed: User.email" {
-				http.Redirect(w, r, "/register?bad", http.StatusSeeOther)
+				// http.Redirect(w, r, "/register?bad", http.StatusSeeOther)
+				app.renderJSON(w, r, &TemplateData{BadRequestForm: true})
 				return
 			}
 			app.serverError(w, r, err)
@@ -527,7 +534,8 @@ func (app *application) register(w http.ResponseWriter, r *http.Request) {
 		app.Session[u.String()] = userId
 
 		http.SetCookie(w, &cookies)
-		http.Redirect(w, r, "/", http.StatusSeeOther)
+		// http.Redirect(w, r, "/", http.StatusSeeOther)
+		app.renderJSON(w, r, &TemplateData{BadRequestForm: false})
 
 	default:
 		app.clientError(w, r, http.StatusBadRequest)
@@ -540,5 +548,6 @@ func (app *application) logout(w http.ResponseWriter, r *http.Request) {
 	if err == nil {
 		delete(app.Session, cookie.Value)
 	}
-	http.Redirect(w, r, "/login", http.StatusSeeOther)
+	// http.Redirect(w, r, "/login", http.StatusSeeOther)
+	app.renderJSON(w, r, &TemplateData{BadRequestForm: false})
 }

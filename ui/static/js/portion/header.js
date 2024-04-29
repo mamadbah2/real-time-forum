@@ -34,14 +34,15 @@ export class customHeader extends HTMLElement {
         const data = await fetches('home')
         const online = this.querySelector('#online')
         const logout = this.querySelector('#logout')
+        logout.style.background = 'red'
         disconnectedManager.setState(data.Disconnected)
         if (data.Disconnected) {
             online.innerHTML = `
                 <h4>Bienvenue </h4>
                 <p>Vous profitez mieux en etant connecté</p>
             `;
-
-            logout.innerHTML = `<a href="">Login</a>`;
+            logout.innerHTML = `<a style="color:white" href="">Login</a>`;
+            logout.id = 'login'
         }
 
     } 
@@ -61,6 +62,12 @@ export class customHeader extends HTMLElement {
 
         this.querySelector('nav span:nth-child(2) > a').addEventListener('click', (e) => {
             e.preventDefault()
+        })
+
+        this.querySelector('#logout').addEventListener('click', async (e)=>{
+            e.preventDefault()
+            let data = await fetches('logout')
+            console.log(data)
         })
     }
 

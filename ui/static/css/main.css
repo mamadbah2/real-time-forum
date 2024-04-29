@@ -23,9 +23,11 @@ body #website {
 
 .Error {
     text-align: center;
-    color: red;
+    color: rgb(255, 136, 136);
     font-weight: normal;
-    font-size: 1em;
+    font-size: .7em;
+    padding: 3px;
+    margin: 0;
 }
 
 #website custom-section {
@@ -114,7 +116,7 @@ body #website {
     margin: 40px auto;
 }
 
-#haut  nav>span {
+#haut  nav span {
     display: block;
     padding: 10px 15px;
     margin: 5px auto;
@@ -129,11 +131,11 @@ body #website {
     font-weight: bold;
 }
 
-#haut  #logout {
+#logout, #login {
     background-color: red;
 }
 
-#haut  #logout a {
+#logout a, #login a {
     color: #fff;
 }
 

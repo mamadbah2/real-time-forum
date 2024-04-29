@@ -31,16 +31,15 @@ export async function fetchesPost(page, formData) {
             "Content-Type": "application/x-www-form-urlencoded",
         },
         body: urlEncode.slice(0,-1)
+    }).catch((reason)=>{
+        console.log(reason)
     })
+
     if (!response.ok) {
         throw new Error('Erreur survenue lors de l envoie des données');
     }
-    let data = await response.json()
-    console.log(response)
-    console.log(data)
+    let data = response.json()
     return data
-
-
 }
 
 export function invokeTag(name, event) {

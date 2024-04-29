@@ -23,7 +23,7 @@ export class customLogin extends HTMLElement {
 </main>
         `
     }
-    
+
     #makeEventListener() {
         // Lorqu'on clique sur j'ai pas de compte ca nous renvoie à register
         this.querySelector('.title span a').addEventListener('click', (e) => {
@@ -40,6 +40,30 @@ export class customLogin extends HTMLElement {
             </main>
             <custom-section></custom-section>`
             this.remove()
+        })
+
+        // Lorsqu'on soumet le formulaire 
+        this.querySelector('.form').addEventListener('submit', async (e) => {
+            e.preventDefault()
+            const formData = new FormData(e.target)
+            let state = await fetchesPost('login', formData)
+            console.log('--------', state)
+            if (state.BadRequestForm !== true) {
+                document.querySelector('#website').innerHTML = `<custom-header></custom-header>
+                        <main>
+                            <custom-home></custom-home>
+                        </main>
+                        <custom-section></custom-section>`
+                this.remove()
+            } else {
+                const errNode = document.createElement('h5')
+                errNode.textContent = "Mauvais renseignements des champs"
+                errNode.className = 'Error'
+                this.querySelector('.title').appendChild(errNode)
+                setTimeout(() => {
+                    errNode.remove()
+                }, 3000)
+            }
         })
     }
 
@@ -82,67 +106,35 @@ export class customRegister extends HTMLElement {
         // Lorsqu'on clique sur Forum01 on revient à la page d'accueil
         this.querySelector('.title em').addEventListener('click', (e) => {
             document.querySelector('#website').innerHTML = `<custom-header></custom-header>
-                                                            <main>
-                                                                <custom-home></custom-home>
-                                                            </main>
-                                                            <custom-section></custom-section>`
+            <main>
+                <custom-home></custom-home>
+            </main>
+            <custom-section></custom-section>`
             this.remove()
         })
 
         // Lorsqu'on soumet le formulaire 
-        this.querySelector('.form').addEventListener('submit', async (e)=> {
+        this.querySelector('.form').addEventListener('submit', async (e) => {
             e.preventDefault()
             const formData = new FormData(e.target)
-            await fetchesPost('register', formData)
-        })
-    }
-
-    /* registerUser = async (userData) => {
-        try {
-            const response = await fetches('register', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(userData)
-            })
-            if (!response.ok) {
-                throw new Error('Failed to register user')
-            }
-            const responseData = await response.json()
-            console.log(responseData);
-            return responseData // Vous pouvez retourner des informations supplémentaires de l'utilisateur enregistré, si nécessaire
-        } catch (error) {
-            console.error('Error registering user:', error)
-            throw error
-        }
-    }
-    #registereventlister() {
-        document.querySelector('#register-login-main').addEventListener('submit', async (event) => {
-            event.preventDefault()
-
-            // Récupérer les valeurs des champs du formulaire
-            const formData = new FormData(event.target)
-            const userData = Object.fromEntries(formData.entries())
-
-            try {
-                // Ajouter les champs supplémentaires au userData
-                userData.nickname = formData.get('nickname')
-                userData.age = formData.get('age')
-                userData.gender = formData.get('gender')
-                userData.firstname = formData.get('firstname')
-                userData.lastname = formData.get('lastname')
-                userData.email = formData.get('email')
-                userData.password = formData.get('password')
-
-                // Envoyer les données à l'API
-                await registerUser(userData)
-                console.log("bingo");
-                return
-                // Rediriger l'utilisateur vers la page de connexion ou afficher un message de succès
-            } catch (error) {
-                // Afficher un message d'erreur à l'utilisateur
+            let state = await fetchesPost('register', formData)
+            console.log('--------', state)
+            if (state.BadRequestForm !== true) {
+                document.querySelector('#website').innerHTML = `<custom-header></custom-header>
+                <main>
+                    <custom-home></custom-home>
+                </main>
+                <custom-section></custom-section>`
+                this.remove()
+            } else {
+                const errNode = document.createElement('h5')
+                errNode.textContent = "Mauvais renseignements des champs"
+                errNode.className = 'Error'
+                this.querySelector('.title').appendChild(errNode)
+                setTimeout(() => {
+                    errNode.remove()
+                }, 3000)
             }
         })
-    } */
+    }
 }
