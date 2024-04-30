@@ -3,6 +3,12 @@ import { disconnectedManager, fetches, invokeTag } from "../services.js";
 export class customHeader extends HTMLElement {
 
     connectedCallback() {
+        this.constructHeader()
+        this.headerInfo()
+        this.#makeEventListener()
+    }
+
+    constructHeader() {
         this.innerHTML = `
             <div id="haut">
                 <div id="logo">
@@ -25,9 +31,6 @@ export class customHeader extends HTMLElement {
                 </nav>
             </div>
     `;
-        this.headerInfo()
-        this.#makeEventListener()
-
     }
 
     async headerInfo() {
@@ -35,16 +38,14 @@ export class customHeader extends HTMLElement {
         const online = this.querySelector('#online')
         const logout = this.querySelector('#logout')
         logout.style.background = 'red'
-        disconnectedManager.setState(data.Disconnected)
+        disconnectedManager.setState(data.Disconnected) // Cela gere l'etat de connexion au niveau du front
         if (data.Disconnected) {
             online.innerHTML = `
                 <h4>Bienvenue </h4>
                 <p>Vous profitez mieux en etant connecté</p>
             `;
             logout.innerHTML = `<a style="color:white" href="">Login</a>`;
-            logout.id = 'login'
         } else {
-            console.log('arriver')
             online.innerHTML = `
             <h4 id="ownerUsername">${data.UserInfo.Username} </h4>
             <p>${data.UserInfo.Email} </p>
@@ -57,8 +58,16 @@ export class customHeader extends HTMLElement {
     }
 
     #makeEventListener() {
-        this.querySelector('#login').addEventListener('click', (e) => {
-            if (disconnectedManager.getState()) invokeTag('custom-login', e)
+        this.querySelector('#logout').addEventListener('click', (e) => {
+            e.preventDefault()
+            if (!disconnectedManager.getState()) {
+                fetches('logout').then((data) => {
+                    if (!data.BadRequestForm) {
+                        disconnectedManager.setState(true)
+                    }
+                })
+            }
+            invokeTag('custom-login', e)
         })
 
         this.querySelector('#postcreate').addEventListener('click', (e) => {
@@ -73,16 +82,6 @@ export class customHeader extends HTMLElement {
             e.preventDefault()
         })
 
-        this.querySelector('#logout').addEventListener('click', async (e) => {
-            e.preventDefault()
-            fetches('logout').then((data) => {
-                if (!data.BadRequestForm) {
-                    invokeTag('custom-login', e)
-                    disconnectedManager.setState(true)
-                }
-
-            })
-        })
     }
 
 }
