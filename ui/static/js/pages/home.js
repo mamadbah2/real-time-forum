@@ -1,4 +1,4 @@
-import { disconnectedManager, fetches, invokeTag } from "../services.js"
+import { disconnectedManager, fetches, fetchesPost, invokeTag } from "../services.js"
 
 
 export class HomeSection extends HTMLElement {
@@ -155,13 +155,13 @@ class ListPost extends HTMLElement {
                             <button name="like" value="${post.LikeActualUser}" type="submit">
                                 <span><i class="fa-regular fa-thumbs-up"></i></span>
                             </button>
-                            <span> ${post.Like_Number} </span>
+                            <span class="i"> ${post.Like_Number} </span>
                         </div>
                         <div class="dislike">
                             <button name="dislike" value="${post.DislikeActualUser}" type="submit">
                                 <span><i class="fa-regular fa-thumbs-down"></i></span>
                             </button>
-                            <span> ${post.Dislike_Number} </span>
+                            <span class="i"> ${post.Dislike_Number} </span>
                         </div>
                         <div class="comment">
                             <a href="">
@@ -183,15 +183,40 @@ class ListPost extends HTMLElement {
 
     #makeEventListener() {
         // Ici dorenavant vu qu'il y a plusieurs evenement à definir, on écrira des fonctions dans la methode.
+
+        // Tout d'abord evenement gerant les like et dislike
         const btns = this.querySelectorAll('button')
         const commentBtns = this.querySelectorAll('.comment a')
         btns.forEach((btn) => {
-            btn.addEventListener('click', (e) => {
+            btn.addEventListener('click', async (e) => {
+                e.preventDefault()
                 if (disconnectedManager.getState()) {
                     invokeTag('custom-login', e)
+                } else {
+                    const form = btn.closest('form')
+                    const formData = new FormData(form)
+                    formData.append(btn.getAttribute('name'), btn.getAttribute('value'))
+                    fetchesPost('home', formData).then((data) => {
+                        if (!data.BadRequestForm) {
+                            const btnLike = form.querySelector('.like button')
+                            const btnDislike = form.querySelector('.dislike button')
+                            const compteurLikeElt = btnLike.parentElement.querySelector('.i')
+                            const compteurDislikeElt = btnDislike.parentElement.querySelector('.i')
+
+                            btnLike.setAttribute('value', data.PostInfo.LikeActualUser)
+                            btnDislike.setAttribute('value', data.PostInfo.DislikeActualUser)
+
+                            console.log(data.PostInfo.LikeActualUser)
+                            compteurLikeElt.textContent = data.PostInfo.Like_Number
+                            compteurDislikeElt.textContent = data.PostInfo.Dislike_Number
+
+                        }
+                    })
                 }
             })
         })
+
+
         commentBtns.forEach((cbtn) => {
             cbtn.addEventListener('click', (e) => {
                 if (disconnectedManager.getState()) {
@@ -212,23 +237,23 @@ export class SectionFoot extends HTMLElement {
     constructSection() {
         this.innerHTML = `
         <div>
-    <h2>About Us <code>&#9940;</code></h2>
-    <p>
-        Les gars, les gars... <code>&#128683;</code> <code>&#128683;</code> <code>&#9888;</code> <br />
-        Tout fail a ce forum sera condamné sous peine de mort.
-        En cas de fail, Vous avez le droit de garder le silence.
-        Tout ce que vous direz pourra être retenu contre vous devant un tribunal.
-        Vous avez le droit à un avocat. Si vous n'avez pas les moyens de
-        vous en offrir un, un avocat vous sera désigné d'office.
-    </p>
-</div>
-<div>
-    <h4>Copyrigths <code>&#169;</code></h4>
-    <p>
-        2024 Tous droits réservés <code>&#128512;</code> realisé avec du <code>&#128150;</code> et un peu de
-        <code>&#9749;</code>
-    </p>
-</div>
+            <h2>About Us <code>&#9940;</code></h2>
+            <p>
+                Les gars, les gars... <code>&#128683;</code> <code>&#128683;</code> <code>&#9888;</code> <br />
+                Tout fail a ce forum sera condamné sous peine de mort.
+                En cas de fail, Vous avez le droit de garder le silence.
+                Tout ce que vous direz pourra être retenu contre vous devant un tribunal.
+                Vous avez le droit à un avocat. Si vous n'avez pas les moyens de
+                vous en offrir un, un avocat vous sera désigné d'office.
+            </p>
+        </div>
+        <div>
+            <h4>Copyrigths <code>&#169;</code></h4>
+            <p>
+                2024 Tous droits réservés <code>&#128512;</code> realisé avec du <code>&#128150;</code> et un peu de
+                <code>&#9749;</code>
+            </p>
+        </div>
         `
     }
 

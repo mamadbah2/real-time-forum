@@ -98,7 +98,7 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 
 	case http.MethodPost:
 		if disconnected {
-			http.Redirect(w, r, "/login", http.StatusSeeOther)
+			app.renderJSON(w, r, &TemplateData{Disconnected: true})
 			return
 		}
 		postId := r.PostForm.Get("postId")
@@ -112,12 +112,14 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 			liked := r.PostForm.Get("like")
 			l, err := strconv.ParseBool(liked)
 			if err != nil {
+				app.renderJSON(w, r, &TemplateData{BadRequestForm: true})
 				app.clientError(w, r, http.StatusBadRequest)
 				return
 			}
 
 			_, err = app.connDB.SetLike(actualUser, pId, l)
 			if err != nil {
+				app.renderJSON(w, r, &TemplateData{BadRequestForm: true})
 				app.serverError(w, r, err)
 			}
 		}
@@ -125,16 +127,24 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 			disliked := r.PostForm.Get("dislike")
 			dl, err := strconv.ParseBool(disliked)
 			if err != nil {
+				app.renderJSON(w, r, &TemplateData{BadRequestForm: true})
 				app.clientError(w, r, http.StatusBadRequest)
 				return
 			}
 
 			_, err = app.connDB.SetDislike(actualUser, pId, dl)
 			if err != nil {
+				app.renderJSON(w, r, &TemplateData{BadRequestForm: true})
 				app.serverError(w, r, err)
 			}
 		}
-		http.Redirect(w, r, "/home", http.StatusSeeOther)
+		pInfo, err := app.connDB.GetPostInfo(pId, actualUser)
+		if err != nil {
+			app.renderJSON(w, r, &TemplateData{BadRequestForm: true})
+			// app.serverError(w, r, err)
+		}
+		// http.Redirect(w, r, "/home", http.StatusSeeOther)
+		app.renderJSON(w, r, &TemplateData{BadRequestForm: false, PostInfo: pInfo})
 
 	default:
 		app.clientError(w, r, http.StatusMethodNotAllowed)

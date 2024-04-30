@@ -95,6 +95,26 @@ func (app *application) render(w http.ResponseWriter, r *http.Request, layout, p
 }
 
 func (app *application) renderJSON(w http.ResponseWriter, r *http.Request, data *TemplateData) {
+	userId, err := app.validSession(r)
+	if err == nil {
+		userInfo, err := app.connDB.GetUser(userId)
+		if err != nil {
+			app.serverError(w, r, err)
+			return
+		}
+		userInfo.LikeCounter, err = app.connDB.GetLikeNumberByUser(userId)
+		if err != nil {
+			app.serverError(w, r, err)
+			return
+		}
+		userInfo.CommentCounter, err = app.connDB.GetCommentNumberByUser(userId)
+		if err != nil {
+			app.serverError(w, r, err)
+			return
+		}
+
+		data.UserInfo = userInfo
+	}
 	// Transformation de toutes les données en json
 	dataByte, err := json.Marshal(data)
 	if err != nil {
@@ -110,7 +130,6 @@ func (app *application) renderJSON(w http.ResponseWriter, r *http.Request, data 
 		return
 	}
 }
-
 
 func (app *application) renderLayoutSPA(w http.ResponseWriter, r *http.Request) {
 	file := []string{"./ui/html/index.html"}

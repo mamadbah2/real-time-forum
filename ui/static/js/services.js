@@ -23,7 +23,8 @@ export async function fetchesPost(page, formData) {
     for (let [k, v] of formData.entries()) {
         urlEncode += `${k}=${v}&`
     }
-    
+    console.log(urlEncode.slice(0,-1))
+    console.log(formData)
     // Envoie de la requete post au go 
     const response = await fetch(`http://localhost:4000/${page}`, {
         method: "POST",

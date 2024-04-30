@@ -20,7 +20,7 @@ export class customHeader extends HTMLElement {
                         <a href="/">Liste Postes</a>
                     </span>
                     <span id="logout">
-                        <a href="/logout">Logout</a>
+                        <a style="color:white" href="/logout">Logout</a>
                     </span>
                 </nav>
             </div>
@@ -43,15 +43,24 @@ export class customHeader extends HTMLElement {
             `;
             logout.innerHTML = `<a style="color:white" href="">Login</a>`;
             logout.id = 'login'
+        } else {
+            console.log('arriver')
+            online.innerHTML = `
+            <h4 id="ownerUsername">${data.UserInfo.Username} </h4>
+            <p>${data.UserInfo.Email} </p>
+            <p><strong>Status </strong> <span class="connected">Connected</span></p>
+            <p>${data.UserInfo.LikeCounter} Like(s) <i class="fa-regular fa-thumbs-up"></i></p>
+            <p>${data.UserInfo.CommentCounter} Comment(s) <i class="fa-regular fa-comments"></i></p>
+            `;
         }
 
-    } 
+    }
 
     #makeEventListener() {
-        this.querySelector('#logout').addEventListener('click', (e) => {
+        this.querySelector('#login').addEventListener('click', (e) => {
             if (disconnectedManager.getState()) invokeTag('custom-login', e)
         })
-        
+
         this.querySelector('#postcreate').addEventListener('click', (e) => {
             if (!disconnectedManager.getState()) {
                 invokeTag('post-form', e)
@@ -64,10 +73,15 @@ export class customHeader extends HTMLElement {
             e.preventDefault()
         })
 
-        this.querySelector('#logout').addEventListener('click', async (e)=>{
+        this.querySelector('#logout').addEventListener('click', async (e) => {
             e.preventDefault()
-            let data = await fetches('logout')
-            console.log(data)
+            fetches('logout').then((data) => {
+                if (!data.BadRequestForm) {
+                    invokeTag('custom-login', e)
+                    disconnectedManager.setState(true)
+                }
+
+            })
         })
     }
 

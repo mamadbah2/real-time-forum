@@ -67,11 +67,11 @@ body #website {
     height: 100vh;
 }
 
- h1 {
+h1 {
     font-size: 1.2em;
 }
 
- #logo {
+#logo {
     width: 100%;
     margin: 0;
 }
@@ -80,7 +80,7 @@ body #website {
     width: 100%;
 }
 
-#haut  #online {
+#haut #online {
     width: 90%;
     margin: 8px auto;
     padding: 15px 10px;
@@ -91,22 +91,22 @@ body #website {
 
 }
 
-#haut  #online p {
+#haut #online p {
     padding: 3px;
     overflow-x: scroll;
 }
 
-#haut  #online h4 {
+#haut #online h4 {
     padding: 0;
 }
 
-#haut  #online h4,
-#haut  #online p {
+#haut #online h4,
+#haut #online p {
     margin: 2px;
     text-align: center;
 }
 
-#haut  #online .connected {
+#haut #online .connected {
     color: rgb(8, 191, 8);
 }
 
@@ -116,7 +116,7 @@ body #website {
     margin: 40px auto;
 }
 
-#haut  nav span {
+#haut nav span {
     display: block;
     padding: 10px 15px;
     margin: 5px auto;
@@ -124,18 +124,20 @@ body #website {
     background-color: #fff
 }
 
-#haut  nav>span a {
+#haut nav>span a {
     color: var(--bg-header);
     text-decoration: none;
     font-size: .9em;
     font-weight: bold;
 }
 
-#logout, #login {
+#logout,
+#login {
     background-color: red;
 }
 
-#logout a, #login a {
+#logout a,
+#login a {
     color: #fff;
 }
 
@@ -374,6 +376,14 @@ main #list-post .Error {
 .c .like span i,
 .c .dislike span i {
     font-size: 1.5em;
+}
+
+button[name="like"][value="true"] span i {
+    color: rgb(8, 191, 8)
+}
+
+button[name="dislike"][value="true"] span i {
+    color: rgb(255, 8, 8)
 }
 
 main #bar-filter {
@@ -653,7 +663,7 @@ main #post-form .select-image {
 }
 
 @media screen and (max-width: 600px) {
-    #haut  {
+    #haut {
         width: 150px;
     }
 
