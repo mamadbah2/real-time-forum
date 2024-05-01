@@ -146,7 +146,7 @@ class ListPost extends HTMLElement {
                     ${post.Content}
                 </p>
             </div>
-                <form action="\" method="post">
+                <form action="" method="post">
                     <div style="display: none;">
                         <input type="text" name="postId" value="${post.Post_id}">
                     </div>
@@ -219,8 +219,19 @@ class ListPost extends HTMLElement {
 
         commentBtns.forEach((cbtn) => {
             cbtn.addEventListener('click', (e) => {
+                e.preventDefault()
                 if (disconnectedManager.getState()) {
                     invokeTag('custom-login', e)
+                } else {
+                    const main = document.querySelector('main')
+                    const btnListPost = document.querySelector('#postenum')
+                    const actualPostElt = cbtn.closest('.post')
+                    main.innerHTML = `<custom-comment data-pid="${actualPostElt.id}"></custom-comment>`
+                    btnListPost.addEventListener('click', (e) => {
+                        e.preventDefault()
+                        main.innerHTML = `<custom-home></custom-home>`
+                        btnListPost.removeEventListener('click', null)
+                    })
                 }
             })
         })

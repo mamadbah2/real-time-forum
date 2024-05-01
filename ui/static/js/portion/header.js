@@ -22,7 +22,7 @@ export class customHeader extends HTMLElement {
                     <span id="postcreate">
                         <a href="/create">Ajouter un post</a>
                     </span>
-                    <span>
+                    <span id="postenum">
                         <a href="/">Liste Postes</a>
                     </span>
                     <span id="logout">
