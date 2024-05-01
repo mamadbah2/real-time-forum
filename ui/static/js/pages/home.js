@@ -44,7 +44,7 @@ class FilterForm extends HTMLElement {
             const checkedFliked = document.getElementById('fliked').checked
             const checkedFposted = document.getElementById('fposted').checked
             const checkCategory = document.querySelectorAll('#bar-filter .checkCategory label')
-            // Traitement des valeurs du form
+            // Traitement des valeurs du form en différé
 
 
             setTimeout(() => {
@@ -93,7 +93,7 @@ class FilterForm extends HTMLElement {
                     listPostElt.parentElement.remove()
                     document.querySelector('custom-home').appendChild(document.createElement('custom-posts'))
                 }
-            }, 25)
+            }, 500)
         })
     }
 

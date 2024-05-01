@@ -10,7 +10,7 @@ export class PostForm extends HTMLElement {
         const creatData = await fetches('home')
         document.querySelector('.checkCategory').innerHTML = ` ${creatData.Categores.map(category => `
             <label for="${category.Name}">
-                <input type="checkbox" name="categorCheck" value="${category.Name}" id="${category.Name}">
+                <input type="checkbox" name="categorCheck" value="${category.Category_id}" id="${category.Name}">
                 <span>${category.Name}</span>
             </label>
         `).join('')}`
@@ -69,7 +69,7 @@ export class PostForm extends HTMLElement {
         btnSubmitForm.addEventListener('click', (e) => {
             e.preventDefault()
             const formData = new FormData(this.querySelector('form'))
-            fetchesPost('create', formData).then((data) => {
+            fetchesPost('create', formData, true).then((data) => {
                 if (!data.BadRequestForm) {
                     document.querySelector('#website').innerHTML = `<custom-header></custom-header>
                     <main>

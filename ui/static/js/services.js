@@ -39,9 +39,6 @@ export async function fetchesPost(page, formData, enctyped = false) {
     } else {
         response = await fetch(`http://localhost:4000/${page}`, {
             method: "POST",
-            headers: {
-                "Content-Type": `multipart/form-data; boundary=${formData.getBoundary()}`,
-            },
             body: formData
         }).catch((reason)=>{
             console.log(reason)

@@ -182,7 +182,6 @@ func (app *application) create(w http.ResponseWriter, r *http.Request) {
 
 		fileImg, fileHeaderImg, err := r.FormFile("imagePost")
 		var nameImg string
-		fmt.Println("blabalcar")
 		// if err == nil marche mais celui là en bas ne marche pas :)
 		if err == nil {
 			if int(fileHeaderImg.Size) > 20000000 || !utils.ImageValidation(fileImg) {
@@ -208,7 +207,7 @@ func (app *application) create(w http.ResponseWriter, r *http.Request) {
 			}
 
 		} else {
-			fmt.Println("je suis entré")
+			app.infoLog.Println(err, " --Pas d'image set")
 		}
 		// faire une fonction pour la logique de validation des donnees
 		// la fonction retourne une boolean si donne bonne ou pas
@@ -216,6 +215,7 @@ func (app *application) create(w http.ResponseWriter, r *http.Request) {
 		content := r.PostForm.Get("content")
 		escapedContent := html.EscapeString(content)
 
+		fmt.Println("id : ", r.Form)
 		max, err := app.connDB.GetNumberCategory()
 		if err != nil {
 			app.errorLog.Fatal(err)
@@ -238,7 +238,6 @@ func (app *application) create(w http.ResponseWriter, r *http.Request) {
 		}
 		lastPostId, err := app.connDB.SetPost(escapedContent, nameImg, actualUser)
 		if err != nil {
-			fmt.Println("je test")
 			app.serverError(w, r, err)
 			return
 		}
