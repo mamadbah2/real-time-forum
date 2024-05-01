@@ -111,6 +111,60 @@ class DetailPost extends HTMLElement {
 
 class CommentForm extends HTMLElement {
     connectedCallback() {
+        this.constructComment()
+    }
 
+    constructComment() {
+        this.innerHTML = `
+            <form action="" method="post" id="form-comment">
+                <textarea name="comment" rows="1" placeholder="Ajouter un commentaire"></textarea>
+                <button name="send-comment" type="submit">
+                    <i class="fa-regular fa-paper-plane"></i>
+                </button>
+            </form>
+        
+            <div id="comments">
+                
+            </div>
+        `
+    }
+
+    commentInformation() {
+        document.querySelector('#comments').innerHTML = `
+        {{ range .CommentsInfo }}
+                <div class="c" id="{{ .Comment_id }}">
+                    <div class="cinfo">
+                        <p>Commenté par : <span>{{ .Username }}</span></p>
+                        <p>Le <span>{{ .Date_Creation }}</span></p>
+                    </div>
+                    <div class="ccontent">
+                        <p style="overflow-wrap:break-word;">
+                            {{ .Comment }}
+                        </p>
+                    </div>
+                    {{ if $Disconnected }}
+                    <form action="/logout" method="get">
+                        {{ else }}
+                        <form action="/comment?{{ $PostInfoPost_id  }}" method="post">
+                            {{end}}
+                            <input type="hidden" name="commentId" value="{{ .Comment_id }}">
+                            <div class="caction">
+                                <div class="like">
+                                    <button type="submit" name="likeComment" value="{{ .LikeActualUser }}">
+                                        <span><i class="fa-regular fa-thumbs-up"></i></span>
+                                        <span> {{ .Like_Number }} </span>
+                                    </button>
+                                </div>
+                                <div class="dislike">
+                                    <button type="submit" name="dislikeComment" value="{{ .DislikeActualUser }}">
+                                        <span><i class="fa-regular fa-thumbs-down"></i></span>
+                                        <span> {{ .Dislike_Number }} </span>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                </div>
+                {{ end }}
+        `
     }
 }
