@@ -186,7 +186,8 @@ func (app *application) create(w http.ResponseWriter, r *http.Request) {
 		// if err == nil marche mais celui là en bas ne marche pas :)
 		if err == nil {
 			if int(fileHeaderImg.Size) > 20000000 || !utils.ImageValidation(fileImg) {
-				http.Redirect(w, r, "/create?bad", http.StatusSeeOther)
+				// http.Redirect(w, r, "/create?bad", http.StatusSeeOther)
+				app.renderJSON(w, r, &TemplateData{BadRequestForm: true})
 				return
 			}
 			if _, err := fileImg.Seek(0, io.SeekStart); err != nil {
@@ -231,7 +232,8 @@ func (app *application) create(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 		if len(categoryIds) == 0 || strings.TrimSpace(escapedContent) == "" {
-			http.Redirect(w, r, "/create?bad", http.StatusSeeOther)
+			// http.Redirect(w, r, "/create?bad", http.StatusSeeOther)
+			app.renderJSON(w, r, &TemplateData{BadRequestForm: true})
 			return
 		}
 		lastPostId, err := app.connDB.SetPost(escapedContent, nameImg, actualUser)
@@ -254,7 +256,7 @@ func (app *application) create(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 
-		http.Redirect(w, r, "/", http.StatusSeeOther)
+		app.renderJSON(w, r, &TemplateData{BadRequestForm: false})
 
 	default:
 		app.clientError(w, r, http.StatusMethodNotAllowed)

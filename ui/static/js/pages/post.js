@@ -1,10 +1,9 @@
-import { fetches } from "../services.js";
+import { fetches, fetchesPost } from "../services.js";
 
 export class PostForm extends HTMLElement {
     connectedCallback() {
         this.renderForm()
         this.fetchCategories()
-        // this.#attachEventListeners()
     }
 
     async fetchCategories() {
@@ -17,10 +16,14 @@ export class PostForm extends HTMLElement {
         `).join('')}`
     }
 
-    async renderForm() {
+    renderForm() {
         this.innerHTML = `
             <main>
+                <button id="comeBack">
+                <i class="fa-solid fa-xmark"></i>
+                </button>
                 <form id="post-form" method="post" enctype="multipart/form-data">
+                <h5 class="Error"></h5>
                     <div class="checkCategory">
 
                     </div>
@@ -42,23 +45,83 @@ export class PostForm extends HTMLElement {
                 </form>
             </main>
         `;
-        this.#attachEventListeners();
+        this.#makeEventListener();
     }
 
-    #attachEventListeners() {
-        this.querySelector('.select-image').addEventListener('click', (e) => {
+    #makeEventListener() {
+        const selectImage = this.querySelector('.select-image');
+        const inputFile = this.querySelector('#file');
+        const imgArea = this.querySelector('.img-area');
+        const btnBack = this.querySelector('#comeBack');
+        const btnSubmitForm = this.querySelector('form input[name="createPost"]')
+
+        btnBack.addEventListener('click', (e) => {
             e.preventDefault()
-            const fileInput = this.querySelector('input[type="file"]');
-            fileInput.click(); // Ouvrir la boîte de dialogue pour sélectionner un fichier
+            document.querySelector('#website').innerHTML = `<custom-header></custom-header>
+            <main>
+                <custom-home></custom-home>
+            </main>
+            <custom-section></custom-section>`
+            this.remove()
+        })
+
+        // Evenement du formulaire visant a creer le post
+        btnSubmitForm.addEventListener('click', (e) => {
+            e.preventDefault()
+            const formData = new FormData(this.querySelector('form'))
+            fetchesPost('create', formData).then((data) => {
+                if (!data.BadRequestForm) {
+                    document.querySelector('#website').innerHTML = `<custom-header></custom-header>
+                    <main>
+                        <custom-home></custom-home>
+                    </main>
+                    <custom-section></custom-section>`
+                    this.remove()
+                } else {
+                    this.querySelector('.Error').textContent = "Veiller entrer de bonnes valeurs aux champs du formulaire"
+                }
+            }).catch((reason)=> {
+                throw new Error(reason)
+            })
+        })
+
+        // Previsionnage de l'image
+        selectImage.addEventListener('click', function (event) {
+            event.preventDefault();
+            inputFile.click();
+        })
+
+        inputFile.addEventListener('change', function (e) {
+            // recupere l'image dans le inputFile
+            const image = this.files[0]
+            console.log(image)
+            if (image.size < 20000000) {
+                // cree une nouvelle instance fileReader
+                const reader = new FileReader();
+                // definit une fonction qui est appele des la fin de lecture du fichier
+                reader.onload = () => {
+                    // S'il y avait deja une image il va l'enlever
+                    const allImg = imgArea.querySelectorAll('img');
+                    allImg.forEach(item => item.remove());
+                    // Dans reader.result se trouve stocker le resultat de 
+                    // reader.readAsDataURL(image);
+                    const imgUrl = reader.result;
+                    const img = document.createElement('img');
+                    img.src = imgUrl;
+                    imgArea.appendChild(img);
+                    imgArea.classList.add('active');
+                    // Stocke dans l'attribut data-img de la balise
+                    // <div class="img-area" data-img="">  le nom du l'img
+                    imgArea.dataset.img = image.name;
+                }
+                reader.readAsDataURL(image);
+            } else {
+                alert("Image size more than 2MB");
+            }
         });
 
-        // Écoutez l'événement "change" sur l'élément input[type="file"]
-        this.querySelector('input[type="file"]').addEventListener('change', (event) => {
-            // Gérez la sélection de l'image ici
-            const selectedFile = event.target.files[0]; // Obtenez le fichier sélectionné
-            console.log('Image sélectionnée :', selectedFile);
-            // Vous pouvez maintenant traiter le fichier sélectionné comme vous le souhaitez, par exemple l'afficher dans un aperçu, l'envoyer au serveur, etc.
-        });
+
+
     }
 
 

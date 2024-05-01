@@ -17,28 +17,38 @@ export async function fetches(page) {
     return data
 }
 
-export async function fetchesPost(page, formData) {
+export async function fetchesPost(page, formData, enctyped = false) {
     // Conversion du format JSON en format URL encoded
     let urlEncode = ""
     for (let [k, v] of formData.entries()) {
         urlEncode += `${k}=${v}&`
     }
-    console.log(urlEncode.slice(0,-1))
-    console.log(formData)
+    let response;
     // Envoie de la requete post au go 
-    const response = await fetch(`http://localhost:4000/${page}`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body: urlEncode.slice(0,-1)
-    }).catch((reason)=>{
-        console.log(reason)
-    })
-
-    if (!response.ok) {
-        throw new Error('Erreur survenue lors de l envoie des données');
+    if (!enctyped) {
+        response = await fetch(`http://localhost:4000/${page}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: urlEncode.slice(0,-1)
+        }).catch((reason)=>{
+            console.log(reason)
+            throw new Error('Erreur survenue lors de l envoie des données');
+        })
+    } else {
+        response = await fetch(`http://localhost:4000/${page}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": `multipart/form-data; boundary=${formData.getBoundary()}`,
+            },
+            body: formData
+        }).catch((reason)=>{
+            console.log(reason)
+            throw new Error('Erreur survenue lors de l envoie des données');
+        })
     }
+
     let data = response.json()
     return data
 }

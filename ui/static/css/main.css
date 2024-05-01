@@ -181,11 +181,17 @@ main #webError h1 {
     letter-spacing: 10px;
 }
 
+post-form > main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
 main #post-form {
     border: 3px solid var(--bg-header);
     width: 90%;
     max-width: 75%;
-    margin: 20vh auto;
     padding: 10px;
     border-radius: 5px;
     background-color: #fff;
@@ -216,6 +222,25 @@ main #post-form #area-text {
     width: 95%;
     margin: 7px auto;
 }
+
+main #comeBack {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    border-radius: 50%;
+    padding: 5px;
+    border: none;
+    background: none;
+    transform: scale(2.3);
+    cursor: pointer;
+    transition: 400ms linear;
+}
+
+main #comeBack:hover {
+    transform: rotate(45deg),scale(2.3);
+}
+
+
 
 #area-text textarea {
     resize: none;
