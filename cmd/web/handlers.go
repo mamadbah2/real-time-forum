@@ -343,18 +343,25 @@ func (app *application) comment(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 		}
+
+		var commentInfo *models.CommentInfo
+
 		if r.PostForm.Has("send-comment") {
 			comment := r.PostForm.Get("comment")
 			escapedComment := html.EscapeString(comment)
 			if len(escapedComment) > 0 {
-				_, err = app.connDB.SetComment(escapedComment, pId, actualUser)
+				cId, err := app.connDB.SetComment(escapedComment, pId, actualUser)
+				if err != nil {
+					app.serverError(w, r, err)
+					return
+				}
+				commentInfo, err = app.connDB.GetCommentInfoById(actualUser, cId)
 				if err != nil {
 					app.serverError(w, r, err)
 					return
 				}
 			}
 		}
-		var commentInfo *models.CommentInfo
 		if r.PostForm.Has("likeComment") {
 			liked := r.PostForm.Get("likeComment")
 			l, err := strconv.ParseBool(liked)
