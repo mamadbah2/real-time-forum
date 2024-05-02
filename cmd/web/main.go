@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path/filepath"
 	"text/template"
 
 	"forum.01/internal/models"
@@ -19,19 +20,18 @@ type application struct {
 	cacheTemplate map[string]*template.Template
 }
 
-/*
-	 func init() {
-		initError := log.New(os.Stderr, "ERROR INIT\t", log.Lmicroseconds)
-		dbFiles, err := filepath.Glob("./db/*.db")
-		if err != nil {
-			log.Fatalln(initError)
-			return
-		}
-		if len(dbFiles) == 1 {
-			os.RemoveAll(dbFiles[0])
-		}
+func init() {
+	initError := log.New(os.Stderr, "ERROR INIT\t", log.Lmicroseconds)
+	dbFiles, err := filepath.Glob("./db/*.db")
+	if err != nil {
+		log.Fatalln(initError)
+		return
 	}
-*/
+	if len(dbFiles) == 1 {
+		os.RemoveAll(dbFiles[0])
+	}
+}
+
 func main() {
 	PORT := flag.String("addr", ":4000", "enter port")
 	flag.Parse()
@@ -59,12 +59,12 @@ func main() {
 	}
 	infoLog.Println("<<Successfully>> Creation Table")
 
-	/* err = app.setData()
+	err = app.setData()
 	if err != nil {
 		errorLog.Fatal("Sql set data error --->", err.Error())
 		return
 	}
-	infoLog.Println("<<Successfully>> Set Data") */
+	infoLog.Println("<<Successfully>> Set Data")
 
 	cache, err := cachingTemplate()
 	if err != nil {
