@@ -12,6 +12,7 @@ import (
 
 type TemplateData struct {
 	PostInfo       *models.PostInfo
+	CommentInfo   *models.CommentInfo
 	UserInfo       *models.User
 	CommentsInfo   []*models.CommentInfo
 	Categores      []*models.Category

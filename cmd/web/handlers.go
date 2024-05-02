@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"forum.01/internal/filters"
+	"forum.01/internal/models"
 	"forum.01/internal/utils"
 	"github.com/gofrs/uuid"
 	"golang.org/x/crypto/bcrypt"
@@ -353,6 +354,7 @@ func (app *application) comment(w http.ResponseWriter, r *http.Request) {
 				}
 			}
 		}
+		var commentInfo *models.CommentInfo
 		if r.PostForm.Has("likeComment") {
 			liked := r.PostForm.Get("likeComment")
 			l, err := strconv.ParseBool(liked)
@@ -366,6 +368,12 @@ func (app *application) comment(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 			_, err = app.connDB.SetLikeComments(actualUser, commentId, l)
+			if err != nil {
+				app.serverError(w, r, err)
+				return
+			}
+
+			commentInfo, err = app.connDB.GetCommentInfoById(actualUser, commentId)
 			if err != nil {
 				app.serverError(w, r, err)
 				return
@@ -389,9 +397,16 @@ func (app *application) comment(w http.ResponseWriter, r *http.Request) {
 				app.serverError(w, r, err)
 				return
 			}
+
+			commentInfo, err = app.connDB.GetCommentInfoById(actualUser, commentId)
+			if err != nil {
+				app.serverError(w, r, err)
+				return
+			}
 		}
 
-		http.Redirect(w, r, fmt.Sprintf("/comment?%d", pId), http.StatusSeeOther)
+		// http.Redirect(w, r, fmt.Sprintf("/comment?%d", pId), http.StatusSeeOther)
+		app.renderJSON(w, r, &TemplateData{CommentInfo: commentInfo, BadRequestForm: false})
 
 	default:
 		app.clientError(w, r, http.StatusMethodNotAllowed)

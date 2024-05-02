@@ -45,6 +45,17 @@ func (m *ConnDB) getCommentByPost(postId int) ([]*Comment, error) {
 	return comments, nil
 }
 
+func (m *ConnDB) getCommentById(commentId int) (*Comment, error) {
+	statement := `SELECT * FROM Comment WHERE comment_id = ?`
+	row := m.DB.QueryRow(statement, commentId)
+	c := &Comment{}
+	err := row.Scan(&c.Comment_id, &c.Comment, &c.Date_Creation, &c.Post_id, &c.User_id)
+	if err != nil {
+		return nil, err
+	}
+	return c, nil
+}
+
 func (m *ConnDB) getCommentNumberByPost(postId int) (int, error) {
 	statement := `SELECT COUNT(*) FROM Comment WHERE post_id = ?`
 	row := m.DB.QueryRow(statement, postId)
@@ -79,6 +90,52 @@ func (m *ConnDB) SetComment(comment string, postId, userId int) (int, error) {
 		return 0, err
 	}
 	return int(id), nil
+}
+
+func (m *ConnDB) GetCommentInfoById(userId, commentId int) (*CommentInfo, error) {
+	comment, err := m.getCommentById(commentId)
+	if err != nil {
+		return nil, err
+	}
+	commentInfo := &CommentInfo{}
+
+	commentInfo.Comment_id = comment.Comment_id
+	commentInfo.Comment = comment.Comment
+	commentInfo.Date_Creation = comment.Date_Creation.String()
+	user, err := m.GetUser(comment.User_id)
+	if err != nil {
+		return nil, err
+	}
+	commentInfo.Username = user.Username
+
+	// reaction for actual user
+	reaction, err := m.GetLikeDislikePC(userId, comment.Comment_id)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			commentInfo.LikeActualUser = false
+			commentInfo.DislikeActualUser = false
+		} else {
+			return nil, err
+		}
+
+	} else {
+		commentInfo.LikeActualUser = reaction.Liked
+		commentInfo.DislikeActualUser = reaction.Disliked
+	}
+
+	counterLike, err := m.getLikeNumberByComment(comment.Comment_id)
+	if err != nil {
+		return nil, err
+	}
+	commentInfo.Like_Number = counterLike
+	counterDislike, err := m.getDislikeNumberByComment(comment.Comment_id)
+	if err != nil {
+		return nil, err
+	}
+	commentInfo.Dislike_Number = counterDislike
+
+	return commentInfo, nil
+
 }
 
 func (m *ConnDB) GetCommentsInfoByPost(userId, postId int) ([]*CommentInfo, error) {

@@ -1,4 +1,4 @@
-import { fetches, disconnectedManager, fetchesPost } from "../services.js"
+import { fetches, disconnectedManager, fetchesPost, invokeTag } from "../services.js"
 
 export class CommentSection extends HTMLElement {
     connectedCallback() {
@@ -112,6 +112,7 @@ class DetailPost extends HTMLElement {
 class CommentForm extends HTMLElement {
     connectedCallback() {
         this.constructComment()
+        this.commentInformation()
     }
 
     constructComment() {
@@ -129,42 +130,82 @@ class CommentForm extends HTMLElement {
         `
     }
 
-    commentInformation() {
+    constructor() {
+        super()
+        this.pid = document.querySelector('custom-comment').dataset.pid
+
+    }
+
+    async commentInformation() {
+        const comments = await fetches(`comment?${this.pid}`)
         document.querySelector('#comments').innerHTML = `
-        {{ range .CommentsInfo }}
-                <div class="c" id="{{ .Comment_id }}">
+        ${comments.CommentsInfo.map((c) => {
+            return `
+            <div class="c" id="${c.Comment_id}">
                     <div class="cinfo">
-                        <p>Commenté par : <span>{{ .Username }}</span></p>
-                        <p>Le <span>{{ .Date_Creation }}</span></p>
+                        <p>Commenté par : <span>${c.Username}</span></p>
+                        <p>Le <span>${c.Date_Creation}</span></p>
                     </div>
                     <div class="ccontent">
                         <p style="overflow-wrap:break-word;">
-                            {{ .Comment }}
+                            ${c.Comment}
                         </p>
                     </div>
-                    {{ if $Disconnected }}
-                    <form action="/logout" method="get">
-                        {{ else }}
-                        <form action="/comment?{{ $PostInfoPost_id  }}" method="post">
-                            {{end}}
-                            <input type="hidden" name="commentId" value="{{ .Comment_id }}">
+                        <form action="" method="post">
+                            <input type="hidden" name="commentId" value="${c.Comment_id}">
                             <div class="caction">
                                 <div class="like">
-                                    <button type="submit" name="likeComment" value="{{ .LikeActualUser }}">
+                                    <button type="submit" name="likeComment" value="${c.LikeActualUser}">
                                         <span><i class="fa-regular fa-thumbs-up"></i></span>
-                                        <span> {{ .Like_Number }} </span>
+                                        <span class="i"> ${c.Like_Number} </span>
                                     </button>
                                 </div>
                                 <div class="dislike">
-                                    <button type="submit" name="dislikeComment" value="{{ .DislikeActualUser }}">
+                                    <button type="submit" name="dislikeComment" value="${c.DislikeActualUser}">
                                         <span><i class="fa-regular fa-thumbs-down"></i></span>
-                                        <span> {{ .Dislike_Number }} </span>
+                                        <span class="i"> ${c.Dislike_Number} </span>
                                     </button>
                                 </div>
                             </div>
                         </form>
                 </div>
-                {{ end }}
-        `
+        `}).join('')}
+                
+        `;
+
+        this.#makeEventListener()
+    }
+
+    #makeEventListener() {
+        const btns = this.querySelectorAll('button')
+        
+        btns.forEach((btn) => {
+            btn.addEventListener('click', async (e) => {
+                e.preventDefault()
+                if (disconnectedManager.getState()) {
+                    invokeTag('custom-login', e)
+                } else {
+                    const form = btn.closest('form')
+                    const formData = new FormData(form)
+                    formData.append(btn.getAttribute('name'), btn.getAttribute('value'))
+                    fetchesPost(`comment?${this.pid}`, formData).then((data) => {
+                        if (!data.BadRequestForm) {
+                            const btnLike = form.querySelector('.like button')
+                            const btnDislike = form.querySelector('.dislike button')
+                            const compteurLikeElt = btnLike.parentElement.querySelector('.i')
+                            const compteurDislikeElt = btnDislike.parentElement.querySelector('.i')
+
+                            btnLike.setAttribute('value', data.CommentInfo.LikeActualUser)
+                            btnDislike.setAttribute('value', data.CommentInfo.DislikeActualUser)
+
+                            console.log(data.CommentInfo.LikeActualUser)
+                            compteurLikeElt.textContent = data.CommentInfo.Like_Number
+                            compteurDislikeElt.textContent = data.CommentInfo.Dislike_Number
+
+                        }
+                    })
+                }
+            })
+        })
     }
 }
