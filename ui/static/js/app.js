@@ -1,8 +1,10 @@
-import { HomeSection, SectionFoot } from "./pages/home.js";
-import { PostForm } from "./pages/post.js";
-import { customHeader } from "./portion/header.js";
-import { customLogin, customRegister } from "./pages/login.js";
-import { CommentSection } from "./pages/comment.js";
+import { HomeSection } from "./pages/home/home.js";
+import { SectionFoot } from "./pages/home/SectionFoot.js";
+import { PostForm } from "./pages/create/post.js";
+import { customHeader } from "./portion/header/customHeader.js";
+import { customLogin } from "./pages/connexion/customLogin.js";
+import { customRegister } from "./pages/connexion/customRegister.js";
+import { CommentSection } from "./pages/comment/comment.js";
 
 customElements.define('custom-header', customHeader)
 customElements.define('custom-home', HomeSection)

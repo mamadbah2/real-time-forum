@@ -1,4 +1,4 @@
-import { fetches, fetchesPost } from "../services.js";
+import { fetches, fetchesPost } from "../../utils.js";
 
 export class PostForm extends HTMLElement {
     connectedCallback() {
