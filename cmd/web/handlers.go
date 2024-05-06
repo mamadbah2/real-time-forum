@@ -607,7 +607,7 @@ func (app *application) chat(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// ON append dans le tableau de client la connexion
-		Clients[conn] = true
+		Clients[conn] = actualUser
 
 		// Une fois la connexion créée on rentre une infinite loop
 		for {
