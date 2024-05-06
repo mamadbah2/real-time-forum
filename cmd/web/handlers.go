@@ -607,12 +607,12 @@ func (app *application) chat(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// ON append dans le tableau de client la connexion
-		Clients[conn] = actualUser
+		Clients[actualUser] = conn
 
 		// Une fois la connexion créée on rentre une infinite loop
 		for {
 			// On lit le message
-			_, msg, err := conn.ReadMessage()
+			msgType, msg, err := conn.ReadMessage()
 			if err != nil {
 				app.serverError(w, r, err)
 				return
@@ -626,6 +626,19 @@ func (app *application) chat(w http.ResponseWriter, r *http.Request) {
 			}
 
 			app.connDB.SetMessage(string(msg), actualUser, receiverId)
+
+			for idClient, connClient := range Clients {
+				if idClient == receiverId {
+					// Envoyer le message au client destinataire
+					err := connClient.WriteMessage(msgType, msg)
+					if err != nil {
+						app.serverError(w, r, err)
+						return
+					}
+					break
+				}
+			}
+
 		}
 
 	}

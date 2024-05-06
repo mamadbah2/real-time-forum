@@ -2,7 +2,7 @@ package main
 
 import "github.com/gorilla/websocket"
 
-var Clients map[*websocket.Conn]int
+var Clients map[int]*websocket.Conn
 
 // INITIALISATION
 var Upgradero = websocket.Upgrader{
