@@ -584,3 +584,49 @@ func (app *application) logout(w http.ResponseWriter, r *http.Request) {
 	// http.Redirect(w, r, "/login", http.StatusSeeOther)
 	app.renderJSON(w, r, &TemplateData{BadRequestForm: false})
 }
+
+func (app *application) chat(w http.ResponseWriter, r *http.Request) {
+	// Verification de la session
+	actualUser, err := app.validSession(r)
+	var disconnected bool
+	if err != nil {
+		disconnected = true
+	}
+
+	switch r.Method {
+	case http.MethodGet:
+		if disconnected {
+			app.renderJSON(w, r, &TemplateData{Disconnected: true})
+			return
+		}
+		// ON cree la connexion en changeant la connexion http en une connexion websocket (tcp)
+		conn, err := Upgradero.Upgrade(w, r, nil)
+		if err != nil {
+			app.serverError(w, r, err)
+			return
+		}
+
+		// ON append dans le tableau de client la connexion
+		Clients[conn] = true
+
+		// Une fois la connexion créée on rentre une infinite loop
+		for {
+			// On lit le message
+			_, msg, err := conn.ReadMessage()
+			if err != nil {
+				app.serverError(w, r, err)
+				return
+			}
+			text := string(msg)
+			receiverTrace := strings.Split(text, "\n")
+			receiverId, err := strconv.Atoi(receiverTrace[len(receiverTrace)-1]) 
+			if err != nil {
+				app.serverError(w, r, err)
+				return
+			}
+
+			app.connDB.SetMessage(string(msg), actualUser, receiverId)
+		}
+
+	}
+}

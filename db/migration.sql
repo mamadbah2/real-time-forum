@@ -63,3 +63,15 @@ CREATE TABLE IF NOT EXISTS ReactionComments (
     FOREIGN KEY (`user_id`) REFERENCES User(`user_id`),
     FOREIGN KEY (comment_id) REFERENCES Comment(comment_id)
 );
+
+-- Création de la table Message
+CREATE TABLE IF NOT EXISTS Messages (
+    message_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    `user_id` INTEGER,
+    content TEXT,
+    creation_date DATETIME,
+    sender_id INTEGER,
+    receiver_id INTEGER,
+    FOREIGN KEY (sender_id) REFERENCES User(`user_id`),
+    FOREIGN KEY (receiver_id) REFERENCES User(`user_id`)
+);
