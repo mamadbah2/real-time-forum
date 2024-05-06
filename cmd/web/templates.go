@@ -12,11 +12,12 @@ import (
 
 type TemplateData struct {
 	PostInfo       *models.PostInfo
-	CommentInfo   *models.CommentInfo
+	CommentInfo    *models.CommentInfo
 	UserInfo       *models.User
 	CommentsInfo   []*models.CommentInfo
-	Categores      []*models.Category
 	PostsInfo      []*models.PostInfo
+	Categores      []*models.Category
+	UserList       []*models.User
 	CodeStatus     Erreur
 	Disconnected   bool
 	BadRequestForm bool

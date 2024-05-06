@@ -44,7 +44,21 @@ func (m *ConnDB) GetUserByMail(email string) (*User, error) {
 	return user, nil
 }
 
-/* func (m *ConnDB) getAllUser() ([]*User, error) {
-
-	return nil, nil
-} */
+func (m *ConnDB) GetAllUser() ([]*User, error) {
+	statement := `SELECT user_id, username FROM User`
+	rows, err := m.DB.Query(statement)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var users []*User
+	for rows.Next() {
+		u := &User{}
+		err = rows.Scan(&u.User_id, &u.Username)
+		if err != nil {
+			return nil, err
+		}
+		users = append(users, u)
+	}
+	return users, nil
+}

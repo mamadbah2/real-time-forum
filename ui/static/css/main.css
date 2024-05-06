@@ -46,7 +46,7 @@ body #website {
     justify-content: space-between;
 }
 
-#website custom-section div {
+#website custom-section > div {
     padding: 10px;
     text-align: center;
     box-shadow: 1px -1px 10px #fff;
@@ -691,6 +691,12 @@ main #post-form .select-image {
 Le style pour le chat box 
  */
 
+custom-chat {
+    position: absolute;
+    bottom: 10px;
+    right: 220px;
+}
+
 #chatBox .container {
     position: absolute;
     bottom: 10px;
@@ -816,6 +822,9 @@ Le style pour le chat box
 /* 
 Le style pour le bouton de notif message
  */
+ #messageBtn {
+    width: fit-content;
+ }
 
 #messageBtn .inbox-btn {
     width: 50px;
@@ -827,13 +836,13 @@ Le style pour le bouton de notif message
     align-items: center;
     justify-content: center;
     position: relative;
-    background-color: #464646;
+    background-color: #fff;
     cursor: pointer;
     transition: all 0.3s;
 }
 
 #messageBtn .inbox-btn svg path {
-    fill: white;
+    fill: var(--bg-header);
 }
 
 #messageBtn .inbox-btn svg {

@@ -51,6 +51,7 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 			app.serverError(w, r, err)
 			return
 		}
+
 		categories, err := app.connDB.GetAllCategory()
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
@@ -59,6 +60,12 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		badRequest := false
+
+		allUser, err := app.connDB.GetAllUser()
+		if err != nil {
+			app.serverError(w, r, err)
+			return
+		}
 
 		if r.Form.Has("filter") {
 			filterCheck := r.Form["filterCheck"]
@@ -91,7 +98,7 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 
 		}
 
-		data := &TemplateData{Categores: categories, PostsInfo: postsInfo, BadRequestForm: badRequest, Disconnected: disconnected}
+		data := &TemplateData{Categores: categories, PostsInfo: postsInfo, UserList: allUser,BadRequestForm: badRequest, Disconnected: disconnected}
 
 		// app.render(w, r, "base", "home", data)
 		app.renderJSON(w, r, data)
@@ -619,7 +626,7 @@ func (app *application) chat(w http.ResponseWriter, r *http.Request) {
 			}
 			text := string(msg)
 			receiverTrace := strings.Split(text, "\n")
-			receiverId, err := strconv.Atoi(receiverTrace[len(receiverTrace)-1]) 
+			receiverId, err := strconv.Atoi(receiverTrace[len(receiverTrace)-1])
 			if err != nil {
 				app.serverError(w, r, err)
 				return
