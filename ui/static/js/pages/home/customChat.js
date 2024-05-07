@@ -1,8 +1,9 @@
+import { fetches } from "../../utils.js";
 
 export class customChat extends HTMLElement {
     connectedCallback() {
         this.constructChat()
-        this.#makeEventListener()
+        this.userInformation()
     }
 
     constructChat() {
@@ -46,6 +47,21 @@ export class customChat extends HTMLElement {
             <div></div>
         </div>
     </div>`;
+
+
+    }
+
+    async userInformation() {
+        const msgArea = this.querySelector('.messages-area')
+        fetches('home').then((data) => {
+            msgArea.innerHTML = data.UserList.map((u) => {
+                return `
+                <div class="list-user" data-id="${u.User_id}">${u.Username}</div>
+                `
+            }).join('')
+        })
+
+        this.#makeEventListener()
     }
 
     #makeEventListener() {
@@ -56,6 +72,6 @@ export class customChat extends HTMLElement {
             this.remove()
         })
 
-        
+
     }
 }
