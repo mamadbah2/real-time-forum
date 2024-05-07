@@ -18,6 +18,7 @@ type TemplateData struct {
 	PostsInfo      []*models.PostInfo
 	Categores      []*models.Category
 	UserList       []*models.User
+	Conversation   []*models.Message
 	CodeStatus     Erreur
 	Disconnected   bool
 	BadRequestForm bool

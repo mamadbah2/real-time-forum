@@ -11,6 +11,11 @@ VALUES (
         'Secret456'
     ),
     (
+        'fatima',
+        'fatima@fatima.gn',
+        '$2a$12$S3254YLmkrIEOXmdYXo73OL6URt9Y.ccelnjwMsenQxvH8VlRymby'
+    ),
+    (
         'CharlieBrown',
         'charlie.brown@example.com',
         'P@ssw0rd'
@@ -144,3 +149,17 @@ VALUES (1, 1, true, false),
     (3, 4, false, true),
     (4, 4, true, false),
     (5, 4, true, false);
+-- Insertion de données fictives dans la table Messages
+
+INSERT INTO Messages (content, creation_date, sender_id, receiver_id)
+VALUES 
+    ('Ça va bien, merci !', '2024-05-07 10:01:00', 2, 1),
+    ('Salut, comment ça va ?', '2024-05-07 10:00:00', 1, 2),
+    ('Hello !', '2024-05-07 10:02:00', 3, 4),
+    ('Hi, how are you?', '2024-05-07 10:03:00', 4, 3),
+    ('Je suis content de te voir !', '2024-05-07 10:04:00', 1, 2),
+    ('Moi aussi !', '2024-05-07 10:05:00', 2, 1),
+    ('What are you doing?', '2024-05-07 10:06:00', 3, 4),
+    ('I am working on a project.', '2024-05-07 10:07:00', 4, 3),
+    ('Ça semble intéressant !', '2024-05-07 10:08:00', 1, 2),
+    ('Oui, cest très excitant !', '2024-05-07 10:09:00', 2, 1);

@@ -1,17 +1,20 @@
 package models
 
-import "time"
+import (
+	"fmt"
+	"time"
+)
 
 type Message struct {
-	Message_id int
-	Content string
+	Message_id    int
+	Content       string
 	Date_Creation time.Time
-	Sender_id int
-	Receiver_id int
+	Sender_id     int
+	Receiver_id   int
 }
 
-func (m *ConnDB) getMessagesByConversation(senderId, receiverId int) ([]*Message, error ){
-	statement := `SELECT * FROM Messages WHERE senderId = ? AND receiverId = ?`
+func (m *ConnDB) GetMessagesByConversation(senderId, receiverId int) ([]*Message, error) {
+	statement := `SELECT * FROM Messages WHERE sender_id = ? AND receiver_id = ?`
 	rows, err := m.DB.Query(statement, senderId, receiverId)
 	if err != nil {
 		return nil, err
@@ -26,13 +29,14 @@ func (m *ConnDB) getMessagesByConversation(senderId, receiverId int) ([]*Message
 		}
 		Messages = append(Messages, m)
 	}
+	fmt.Println(Messages)
 	return Messages, nil
 }
 
 func (m *ConnDB) SetMessage(content string, senderId, receiverId int) (int, error) {
 	statement := `INSERT INTO Messages (content, date_creation, sender_id, receiver_id) 
 	VALUES (?, CURRENT_TIMESTAMP, ?, ?)`
-	result, err := m.DB.Exec(statement, content,senderId, receiverId)
+	result, err := m.DB.Exec(statement, content, senderId, receiverId)
 	if err != nil {
 		return 0, err
 	}

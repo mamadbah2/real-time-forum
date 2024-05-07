@@ -67,7 +67,6 @@ CREATE TABLE IF NOT EXISTS ReactionComments (
 -- Création de la table Message
 CREATE TABLE IF NOT EXISTS Messages (
     message_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    `user_id` INTEGER,
     content TEXT,
     creation_date DATETIME,
     sender_id INTEGER,

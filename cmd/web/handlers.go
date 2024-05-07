@@ -98,7 +98,7 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 
 		}
 
-		data := &TemplateData{Categores: categories, PostsInfo: postsInfo, UserList: allUser,BadRequestForm: badRequest, Disconnected: disconnected}
+		data := &TemplateData{Categores: categories, PostsInfo: postsInfo, UserList: allUser, BadRequestForm: badRequest, Disconnected: disconnected}
 
 		// app.render(w, r, "base", "home", data)
 		app.renderJSON(w, r, data)
@@ -632,7 +632,11 @@ func (app *application) chat(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			app.connDB.SetMessage(string(msg), actualUser, receiverId)
+			_, err = app.connDB.SetMessage(string(msg), actualUser, receiverId)
+			if err != nil {
+				app.serverError(w, r, err)
+				return
+			}
 
 			for idClient, connClient := range Clients {
 				if idClient == receiverId {
@@ -647,6 +651,26 @@ func (app *application) chat(w http.ResponseWriter, r *http.Request) {
 			}
 
 		}
+	case http.MethodPost:
+		err := r.ParseForm()
+		if err != nil {
+			app.clientError(w, r, http.StatusBadRequest)
+			return
+		}
+		Id := r.PostForm.Get("receiverId")
+		receiverId, err := strconv.Atoi(Id)
+		fmt.Println(r.PostForm)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			app.clientError(w, r, http.StatusBadRequest)
+			return
+		}
+		conv, err := app.connDB.GetMessagesByConversation(actualUser, receiverId)
+		if err != nil {
+			app.serverError(w, r, err)
+			return
+		}
+		app.renderJSON(w, r, &TemplateData{Conversation: conv, BadRequestForm: false})
 
 	}
 }

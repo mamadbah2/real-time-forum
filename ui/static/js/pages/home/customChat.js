@@ -1,4 +1,4 @@
-import { fetches } from "../../utils.js";
+import { fetches, fetchesPost } from "../../utils.js"
 
 export class customChat extends HTMLElement {
     connectedCallback() {
@@ -18,21 +18,15 @@ export class customChat extends HTMLElement {
                 </div>
             </div>
             <div class="messages-area">
-    
-                <div class="message one"></div>
-                <div class="message two"></div>
-                <div class="message three"></div>
-                <div class="message four"></div>
-                <div class="message five"></div>
-                <div class="message six"></div>
+
             </div>
-            <div class="sender-area" style="display: none;">
+            <div class="sender-area"  style="display:none">
                 <div class="input-place">
                     <input placeholder="Send a message." class="send-input" type="text">
                     <div class="send">
                         <svg class="send-icon" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg"
                         this.remove()xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 512 512"
-                            style="enable-background:new 0 0 512 512;" xml:space="preserve">
+                            style="enable-background:new 0 0 512 512" xml:space="preserve">
                             <g>
                                 <g>
                                     <path fill="#6B6C7B"
@@ -46,7 +40,7 @@ export class customChat extends HTMLElement {
             </div>
             <div></div>
         </div>
-    </div>`;
+    </div>`
 
 
     }
@@ -59,9 +53,8 @@ export class customChat extends HTMLElement {
                 <div class="list-user" data-id="${u.User_id}">${u.Username}</div>
                 `
             }).join('')
-        })
+        }).then(() => {this.#makeEventListener()})
 
-        this.#makeEventListener()
     }
 
     #makeEventListener() {
@@ -71,7 +64,46 @@ export class customChat extends HTMLElement {
         closeBtn.addEventListener('click', () => {
             this.remove()
         })
+        
+        // conversation
+        const listUser = this.querySelectorAll('.list-user')
+        const msgArea = this.querySelector('.messages-area')
+        console.log(listUser);
+        listUser.forEach(v => {
+            v.addEventListener('click', async () => {
+                let receiverId = v.dataset.id
+                senderArea.style.display="block"
+                console.log('sadou');
+                try {
+                    const formData = new FormData()
+                    formData.append('receiverId', receiverId)
+                    console.log(formData);
+                    const data = await fetchesPost('chat', formData)
+                    console.log(data);
+                    msgArea.innerHTML = data.Conversation.map(msg => `
+                        <div class="message-content">${msg.Content}</div>
+                    `).join('')
+                } catch (error) {
+                    console.error('Erreur:', error)
+                }
+            })
 
+        })
 
+        //submit
+        const senderIcone = this.querySelector('.send-icon');
+        senderIcone.addEventListener('click', async () => {
+            const sendInput = this.querySelector('.send-input');
+            const chat = sendInput.value; // Assuming chat is the message content
+            try {
+                const formData = new FormData();
+                formData.append('message', chat);
+                const data = await fetchesPost('chat', formData);
+                // Handle response as needed
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
     }
+
 }

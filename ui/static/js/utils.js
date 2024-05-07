@@ -11,7 +11,7 @@ export const disconnectedManager = {
 export async function fetches(page) {
     const response = await fetch(`http://localhost:4000/${page}`, { method: "GET" })
     if (!response.ok) {
-        throw new Error("Erreur lors de la récupération des données");
+        throw new Error("Erreur lors de la récupération des données")
     }
     const data = await response.json()
     return data
@@ -23,7 +23,7 @@ export async function fetchesPost(page, formData, enctyped = false) {
     for (let [k, v] of formData.entries()) {
         urlEncode += `${k}=${v}&`
     }
-    let response;
+    let response
     // Envoie de la requete post au go 
     if (!enctyped) {
         response = await fetch(`http://localhost:4000/${page}`, {
@@ -34,7 +34,7 @@ export async function fetchesPost(page, formData, enctyped = false) {
             body: urlEncode.slice(0,-1)
         }).catch((reason)=>{
             console.log(reason)
-            throw new Error('Erreur survenue lors de l envoie des données');
+            throw new Error('Erreur survenue lors de l envoie des données')
         })
     } else {
         response = await fetch(`http://localhost:4000/${page}`, {
@@ -42,7 +42,7 @@ export async function fetchesPost(page, formData, enctyped = false) {
             body: formData
         }).catch((reason)=>{
             console.log(reason)
-            throw new Error('Erreur survenue lors de l envoie des données');
+            throw new Error('Erreur survenue lors de l envoie des données')
         })
     }
 

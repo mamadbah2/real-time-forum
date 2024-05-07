@@ -738,10 +738,11 @@ custom-chat {
 
 
 #chatBox .container .messages-area {
-    background-color: green;
+    background-color: gray;
     width: 100%;
-    max-height: 210px;
+    min-height: 210px;
     overflow: scroll;
+
 }
 
 #chatBox .list-user {
