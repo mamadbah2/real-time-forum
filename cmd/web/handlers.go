@@ -14,6 +14,7 @@ import (
 	"forum.01/internal/models"
 	"forum.01/internal/utils"
 	"github.com/gofrs/uuid"
+	"github.com/gorilla/websocket"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -587,6 +588,12 @@ func (app *application) logout(w http.ResponseWriter, r *http.Request) {
 	cookie, err := r.Cookie("session_token")
 	if err == nil {
 		delete(app.Session, cookie.Value)
+		for i, client := range Clients {
+			if (client.idClient == app.Session[cookie.Value]) {
+				Clients = append(Clients[:i], Clients[i+1:]...)
+				fmt.Println("Le client ", client, " a ete remove")
+			}
+		}
 	}
 	// http.Redirect(w, r, "/login", http.StatusSeeOther)
 	app.renderJSON(w, r, &TemplateData{BadRequestForm: false})
@@ -614,8 +621,15 @@ func (app *application) chat(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// ON append dans le tableau de client la connexion
-		Clients[actualUser] = conn
-
+		Clients = append(Clients, Client{idClient: actualUser, Conn: conn})
+		for _, client := range Clients {
+			err := client.Conn.WriteMessage(websocket.TextMessage, []byte("Connecté "+strconv.Itoa(actualUser)))
+			if err != nil {
+				app.serverError(w, r, err)
+				return
+			}
+		}
+		fmt.Println("C'est passé")
 		// Une fois la connexion créée on rentre une infinite loop
 		for {
 			// On lit le message
@@ -624,24 +638,29 @@ func (app *application) chat(w http.ResponseWriter, r *http.Request) {
 				app.serverError(w, r, err)
 				return
 			}
-			text := string(msg)
-			receiverTrace := strings.Split(text, "\n")
-			receiverId, err := strconv.Atoi(receiverTrace[len(receiverTrace)-1])
+
+			// On recupere id du receiver contenu implicitement dans le msg
+			textTab := strings.Split(string(msg), "\n")
+			text := strings.Join(textTab[:len(textTab)-1], "\n")
+			receiverTrace := textTab[len(textTab)-1]
+			receiverId, err := strconv.Atoi(receiverTrace)
 			if err != nil {
 				app.serverError(w, r, err)
 				return
 			}
 
-			_, err = app.connDB.SetMessage(string(msg), actualUser, receiverId)
+			// On met le message dans la base de donnée
+			_, err = app.connDB.SetMessage(text, actualUser, receiverId)
 			if err != nil {
 				app.serverError(w, r, err)
 				return
 			}
 
-			for idClient, connClient := range Clients {
-				if idClient == receiverId {
+			//On le redistribue à l'ayant droit
+			for _, clt := range Clients {
+				if clt.idClient == receiverId {
 					// Envoyer le message au client destinataire
-					err := connClient.WriteMessage(msgType, msg)
+					err := clt.Conn.WriteMessage(msgType, msg)
 					if err != nil {
 						app.serverError(w, r, err)
 						return
@@ -659,17 +678,22 @@ func (app *application) chat(w http.ResponseWriter, r *http.Request) {
 		}
 		Id := r.PostForm.Get("receiverId")
 		receiverId, err := strconv.Atoi(Id)
-		fmt.Println(r.PostForm)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 			app.clientError(w, r, http.StatusBadRequest)
 			return
 		}
-		conv, err := app.connDB.GetMessagesByConversation(actualUser, receiverId)
+		convIn, err := app.connDB.GetMessagesByConversation(actualUser, receiverId)
 		if err != nil {
 			app.serverError(w, r, err)
 			return
 		}
+		convOut, err := app.connDB.GetMessagesByConversation(receiverId, actualUser)
+		if err != nil {
+			app.serverError(w, r, err)
+			return
+		}
+		conv := append(convIn, convOut...)
 		app.renderJSON(w, r, &TemplateData{Conversation: conv, BadRequestForm: false})
 
 	}

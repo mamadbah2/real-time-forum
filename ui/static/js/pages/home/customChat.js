@@ -1,10 +1,18 @@
-import { fetches, fetchesPost } from "../../utils.js"
+import { fetches, fetchesPost, socketManager } from "../../utils.js"
+
 
 export class customChat extends HTMLElement {
+    /* constructor() {
+        super()
+        this.socket = socketManager.get()
+    } */
+
     connectedCallback() {
         this.constructChat()
         this.userInformation()
     }
+
+    // static socket = socketManager.get()
 
     constructChat() {
         this.innerHTML = `<div id="chatBox">
@@ -20,7 +28,7 @@ export class customChat extends HTMLElement {
             <div class="messages-area">
 
             </div>
-            <div class="sender-area"  style="display:none">
+            <div class="sender-area" data-id=""  style="display:none">
                 <div class="input-place">
                     <input placeholder="Send a message." class="send-input" type="text">
                     <div class="send">
@@ -53,7 +61,7 @@ export class customChat extends HTMLElement {
                 <div class="list-user" data-id="${u.User_id}">${u.Username}</div>
                 `
             }).join('')
-        }).then(() => {this.#makeEventListener()})
+        }).then(() => { this.#makeEventListener() })
 
     }
 
@@ -64,27 +72,37 @@ export class customChat extends HTMLElement {
         closeBtn.addEventListener('click', () => {
             this.remove()
         })
-        
+
         // conversation
         const listUser = this.querySelectorAll('.list-user')
         const msgArea = this.querySelector('.messages-area')
-        console.log(listUser);
         listUser.forEach(v => {
             v.addEventListener('click', async () => {
                 let receiverId = v.dataset.id
-                senderArea.style.display="block"
-                console.log('sadou');
+                senderArea.style.display = "block"
+                senderArea.dataset.id = receiverId
                 try {
                     const formData = new FormData()
                     formData.append('receiverId', receiverId)
-                    console.log(formData);
                     const data = await fetchesPost('chat', formData)
-                    console.log(data);
-                    msgArea.innerHTML = data.Conversation.map(msg => `
-                        <div class="message-content">${msg.Content}</div>
-                    `).join('')
+                    if (data.Conversation !== null) {
+                        let tabMess = data.Conversation.map((msg) => {
+                            if (msg.Receiver_id == receiverId) {
+                                return [msg.Message_id, `<div class="message-content r"><p>${msg.Content}</p><span>${msg.Date_Creation}</span></div>`]
+                            }
+                            return [msg.Message_id, `<div class="message-content s"><p>${msg.Content}</p><span>${msg.Date_Creation}</span></div>`]
+                        })
+                        tabMess.sort((a, b) => a[0] - b[0]);
+                        console.log("tab : ", tabMess);
+                        msgArea.innerHTML = `${tabMess.map((msg) => {
+                            return msg[1]
+                        }).join('')}`
+                    } else {
+                        msgArea.innerHTML = ``
+                    }
+                    document.querySelector('#chatBox .nav-bar a').textContent = `${v.textContent}`
                 } catch (error) {
-                    console.error('Erreur:', error)
+                    console.error('Erreur : ', error)
                 }
             })
 
@@ -92,17 +110,18 @@ export class customChat extends HTMLElement {
 
         //submit
         const senderIcone = this.querySelector('.send-icon');
+        const sendInput = this.querySelector('.send-input');
         senderIcone.addEventListener('click', async () => {
-            const sendInput = this.querySelector('.send-input');
-            const chat = sendInput.value; // Assuming chat is the message content
-            try {
-                const formData = new FormData();
-                formData.append('message', chat);
-                const data = await fetchesPost('chat', formData);
-                // Handle response as needed
-            } catch (error) {
-                console.error('Error:', error);
-            }
+            if (sendInput.value !== "") {
+                try {
+                    socketManager.get().send(sendInput.value+"\n"+senderArea.dataset.id)
+                    msgArea.innerHTML+= `<div class="message-content s"><p>${sendInput.value}</p><span>${new Date().toISOString()}</span></div>`
+                    sendInput.value = ''
+                    
+                } catch (error) {
+                    console.error('Error:', error);
+                }
+            } 
         });
     }
 

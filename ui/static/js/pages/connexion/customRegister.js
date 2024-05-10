@@ -1,5 +1,4 @@
-import { fetchesPost } from "../../utils.js";
-
+import { fetchesPost, socketManager } from "../../utils.js";
 
 export class customRegister extends HTMLElement {
     connectedCallback() {
@@ -58,6 +57,7 @@ export class customRegister extends HTMLElement {
                 </main>
                 <custom-section></custom-section>`;
                 this.remove();
+                socketManager.set('ws://localhost:4000/chat')
             } else {
                 const errNode = document.createElement('h5');
                 errNode.textContent = "Mauvais renseignements des champs";

@@ -740,7 +740,7 @@ custom-chat {
 #chatBox .container .messages-area {
     background-color: gray;
     width: 100%;
-    min-height: 210px;
+    min-height: 200px;
     overflow: scroll;
 
 }
@@ -767,6 +767,8 @@ custom-chat {
     height: 70px;
     display: flex;
     border-radius: 8px;
+    display: flex;
+    justify-content: center;
 }
 
 .sender-area .message {
@@ -774,17 +776,36 @@ custom-chat {
     height: 40px;
 }
 
-.message.one,
-.message.three,
-.message.five {
-    background-color: #2E2F3A;
+.message-content {
+    padding: 5px;
+    display: flex;
+    flex-direction: column;
+}
+.r {
+    align-items: flex-start;
+}
+.s {
+    align-items: flex-end;
 }
 
-.message.two,
-.message.four,
-.message.six {
-    background-color: #343541;
+.message-content p {
+    padding: 5px 3px;
+    border-radius: 5px;
+    font-style: italic;
+    margin: 0;
+    width: fit-content;
 }
+.r p {
+    background-color: #828E9E;
+}
+.s p {
+    background-color: var(--bg-header);
+}
+.message-content span {
+    font-size: .5em;
+}
+
+
 
 .send-img {
     width: 30px;
@@ -813,8 +834,6 @@ custom-chat {
 .sender-area .input-place {
     display: flex;
     flex-direction: row;
-    margin-top: 15px;
-    margin-left: 10px;
     align-items: center;
     background-color: #40414F;
     border-radius: 7px;

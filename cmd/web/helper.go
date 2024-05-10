@@ -17,8 +17,8 @@ func (app *application) serverError(w http.ResponseWriter, r *http.Request, err 
 	var code Erreur
 	code.Code = http.StatusInternalServerError
 	w.WriteHeader(code.Code)
-	data := &TemplateData{CodeStatus: code}
-	app.render(w, r, "baseLogRegis", "error", data)
+	// data := &TemplateData{CodeStatus: code}
+	// app.render(w, r, "baseLogRegis", "error", data)
 	// http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 }
 
@@ -27,8 +27,8 @@ func (app *application) clientError(w http.ResponseWriter, r *http.Request, stat
 	w.WriteHeader(status)
 	var code Erreur
 	code.Code = status
-	data := &TemplateData{CodeStatus: code}
-	app.render(w, r, "baseLogRegis", "error", data)
+	// data := &TemplateData{CodeStatus: code}
+	// app.render(w, r, "baseLogRegis", "error", data)
 
 }
 

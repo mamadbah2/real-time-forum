@@ -34,7 +34,7 @@ func (m *ConnDB) GetMessagesByConversation(senderId, receiverId int) ([]*Message
 }
 
 func (m *ConnDB) SetMessage(content string, senderId, receiverId int) (int, error) {
-	statement := `INSERT INTO Messages (content, date_creation, sender_id, receiver_id) 
+	statement := `INSERT INTO Messages (content, creation_date, sender_id, receiver_id) 
 	VALUES (?, CURRENT_TIMESTAMP, ?, ?)`
 	result, err := m.DB.Exec(statement, content, senderId, receiverId)
 	if err != nil {

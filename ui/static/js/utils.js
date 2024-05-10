@@ -1,4 +1,26 @@
-let disconnected = false
+let socket
+
+export const socketManager = {
+    get() {
+        return socket
+    },
+    set(url) {
+        socket = new WebSocket(url) 
+        socket.addEventListener('open', () => { console.log('connexion chat ouverte') })
+        socket.addEventListener('message', (e) => {
+            console.log("Message entrant : ", e.data)
+            const msgArea = document.querySelector('#chatBox .container .messages-area')
+            if (msgArea == null) {
+                const counterMsg = document.querySelector('#messageBtn .msg-count')
+                counterMsg.textContent = `${parseInt(counterMsg.textContent)+1}`
+            } else {
+                msgArea.innerHTML+= `<div class="message-content r"><p>${e.data.split('\n').slice(0,-1)}</p><span>${new Date().toISOString()}</span></div>`
+            }
+        })
+    }
+}
+
+let disconnected = true
 export const disconnectedManager = {
     getState() {
         return disconnected

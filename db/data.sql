@@ -29,6 +29,11 @@ VALUES (
         'EmmaWhite',
         'emma.white@example.com',
         'Confidential987'
+    ),
+    (
+        'boboDeNar',
+        'bahs@gmail.com',
+        '$2a$12$Sa.9gDTECdrMfKK/rWYaHuUJZtzgnmiwk9i7mroAzUyscgsDDo4Zy'
     );
 -- Insertion de données fictives dans la table Category
 INSERT INTO Category (name)
@@ -153,13 +158,13 @@ VALUES (1, 1, true, false),
 
 INSERT INTO Messages (content, creation_date, sender_id, receiver_id)
 VALUES 
-    ('Ça va bien, merci !', '2024-05-07 10:01:00', 2, 1),
-    ('Salut, comment ça va ?', '2024-05-07 10:00:00', 1, 2),
+    ('Salut, comment ça va ?', '2024-05-07 10:00:00', 7, 1),
+    ('Ça va bien, merci !', '2024-05-07 10:01:00', 1, 7),
     ('Hello !', '2024-05-07 10:02:00', 3, 4),
     ('Hi, how are you?', '2024-05-07 10:03:00', 4, 3),
-    ('Je suis content de te voir !', '2024-05-07 10:04:00', 1, 2),
-    ('Moi aussi !', '2024-05-07 10:05:00', 2, 1),
+    ('Je suis content de te voir !', '2024-05-07 10:04:00', 7, 1),
+    ('Moi aussi !', '2024-05-07 10:05:00', 1, 7),
     ('What are you doing?', '2024-05-07 10:06:00', 3, 4),
     ('I am working on a project.', '2024-05-07 10:07:00', 4, 3),
-    ('Ça semble intéressant !', '2024-05-07 10:08:00', 1, 2),
-    ('Oui, cest très excitant !', '2024-05-07 10:09:00', 2, 1);
+    ('L informatiq, cest très passionnant !', '2024-05-07 10:07:00', 1, 7),
+    ('Ça semble intéressant !', '2024-05-07 10:08:00', 7, 1);

@@ -1,4 +1,4 @@
-import { disconnectedManager, fetches, fetchesPost } from "../../utils.js"
+import { fetchesPost, socketManager } from "../../utils.js"
 
 export class customLogin extends HTMLElement {
     connectedCallback() {
@@ -47,7 +47,6 @@ export class customLogin extends HTMLElement {
             e.preventDefault()
             const formData = new FormData(e.target)
             let state = await fetchesPost('login', formData)
-            console.log('--------', state)
             if (state.BadRequestForm !== true) {
                 document.querySelector('#website').innerHTML = `<custom-header></custom-header>
                         <main>
@@ -55,6 +54,8 @@ export class customLogin extends HTMLElement {
                         </main>
                         <custom-section></custom-section>`
                 this.remove()
+                socketManager.set('ws://localhost:4000/chat')
+
             } else {
                 const errNode = document.createElement('h5')
                 errNode.textContent = "Mauvais renseignements des champs"
