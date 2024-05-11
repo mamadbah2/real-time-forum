@@ -2,6 +2,10 @@
 CREATE TABLE IF NOT EXISTS User (
     user_id INTEGER PRIMARY KEY AUTOINCREMENT,
     username VARCHAR(255) UNIQUE,
+    age INTEGER ,
+    gender VARCHAR(255) ,
+    firstname VARCHAR(255) ,
+    lastname VARCHAR(255) ,
     email VARCHAR(255) UNIQUE,
     `password` VARCHAR(255)
 );

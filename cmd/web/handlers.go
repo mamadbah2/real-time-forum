@@ -454,18 +454,26 @@ func (app *application) login(w http.ResponseWriter, r *http.Request) {
 		}
 		email := r.PostForm.Get("email")
 		password := r.PostForm.Get("password")
-		if !utils.EmailValidation(email) || !utils.PasswordValidation(password) {
+		if !utils.PasswordValidation(password) {
 			// http.Redirect(w, r, "/login?bad", http.StatusSeeOther)
+			app.renderJSON(w, r, &TemplateData{BadRequestForm: true})
+			return
+		}
+		var user *models.User
+		if utils.EmailValidation(email){
+			user, err = app.connDB.GetUserByMail(email)
+		}else if utils.UsernameValidation(email){
+			user, err = app.connDB.GetUserByMail(email)
+		}else {
 			app.renderJSON(w, r, &TemplateData{BadRequestForm: true})
 			return
 		}
 
-		user, err := app.connDB.GetUserByMail(email)
 		if err != nil {
-			// http.Redirect(w, r, "/login?bad", http.StatusSeeOther)
 			app.renderJSON(w, r, &TemplateData{BadRequestForm: true})
 			return
 		}
+		
 		err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
 		if err != nil {
 			http.Redirect(w, r, "/login?bad", http.StatusSeeOther)
@@ -523,11 +531,15 @@ func (app *application) register(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		username := r.PostForm.Get("username")
+		username := r.PostForm.Get("nickname")
 		email := r.PostForm.Get("email")
 		password := r.PostForm.Get("password")
+		age := r.PostForm.Get("age")
+		gender := r.PostForm.Get("gender")
+		firstname := r.PostForm.Get("first-name")
+		lastname := r.PostForm.Get("last-name")
 		fmt.Println("---------", r.PostForm)
-		if !utils.UsernameValidation(username) || !utils.EmailValidation(email) || !utils.PasswordValidation(password) {
+		if !utils.UsernameValidation(username) || !utils.UsernameValidation(firstname) || !utils.UsernameValidation(lastname) || !utils.EmailValidation(email) || !utils.PasswordValidation(password) {
 			// http.Redirect(w, r, "/register?bad", http.StatusSeeOther)
 			app.renderJSON(w, r, &TemplateData{BadRequestForm: true})
 			return
@@ -539,8 +551,9 @@ func (app *application) register(w http.ResponseWriter, r *http.Request) {
 			app.renderJSON(w, r, &TemplateData{BadRequestForm: true})
 			return
 		}
+		ages, _ := strconv.Atoi(age)
 		password = string(encryptPass)
-		userId, err := app.connDB.SetUser(username, email, password)
+		userId, err := app.connDB.SetUser(username, ages, gender, firstname, lastname, email, password)
 		if err != nil {
 			if err.Error() == "UNIQUE constraint failed: User.username" {
 				// http.Redirect(w, r, "/register?bad", http.StatusSeeOther)
