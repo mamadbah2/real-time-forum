@@ -10,6 +10,8 @@ CREATE TABLE IF NOT EXISTS User (
     `password` VARCHAR(255)
 );
 
+---------------------------------------------
+
 -- Création de la table Category
 CREATE TABLE IF NOT EXISTS Category (
     category_id INTEGER PRIMARY KEY AUTOINCREMENT,
