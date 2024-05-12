@@ -1,4 +1,4 @@
-import { disconnectedManager, fetches } from "../../utils.js";
+import { fetches } from "../../utils.js";
 
 export class FilterForm extends HTMLElement {
     connectedCallback() {
@@ -27,8 +27,6 @@ export class FilterForm extends HTMLElement {
             document.querySelector('custom-home').appendChild(customPosts);
 
             // Recuperation des valeurs du form
-            const checkedFliked = document.getElementById('fliked').checked;
-            const checkedFposted = document.getElementById('fposted').checked;
             const checkCategory = document.querySelectorAll('#bar-filter .checkCategory label');
             // Traitement des valeurs du form en différé
             setTimeout(() => {
@@ -53,27 +51,7 @@ export class FilterForm extends HTMLElement {
                     }
                 });
 
-                if (!disconnectedManager.getState()) {
-                    if (checkedFliked) {
-                        posts.forEach((post) => {
-                            let likedElt = post.querySelector('.haction button[name="like"]');
-                            if (likedElt.getAttribute('value') === 'true') {
-                                listPostElt.removeChild(post);
-                            }
-                        });
-                    }
-                    if (checkedFposted) {
-                        posts.forEach((post) => {
-                            let postCreator = post.querySelector('.hinfo > p').textContent;
-                            let actualUsername = document.querySelector('#ownerUsername').textContent;
-                            if (postCreator !== actualUsername) {
-                                listPostElt.removeChild(post);
-                            }
-                        });
-                    }
-                }
-
-                if (!(checkedFliked || checkedFposted || statusCheck)) {
+                if (!statusCheck) {
                     listPostElt.parentElement.remove();
                     document.querySelector('custom-home').appendChild(document.createElement('custom-posts'));
                 }
@@ -86,16 +64,6 @@ export class FilterForm extends HTMLElement {
         this.innerHTML = `
             <div id="bar-filter">
                 <form action="" method="GET">
-                    <div class="checkFilter">
-                        <label for="fliked">
-                            <input type="checkbox" name="filterCheck" value="Liked-Post" id="fliked">
-                            <span>My Liked Posts</span>
-                        </label>
-                        <label for="fposted">
-                            <input type="checkbox" name="filterCheck" value="Created-Post" id="fposted">
-                            <span>My Created Posts</span>
-                        </label>
-                    </div>
                     <div class="checkCategory">
 
                     </div>

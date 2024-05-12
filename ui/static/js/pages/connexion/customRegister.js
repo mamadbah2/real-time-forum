@@ -1,7 +1,8 @@
-import { fetchesPost, socketManager } from "../../utils.js";
+import { fetchesPost, socketManager, updateURL } from "../../utils.js";
 
 export class customRegister extends HTMLElement {
     connectedCallback() {
+        updateURL('register')
         this.constructRegister();
         this.#makeEventListener();
         // this.#registereventlister()
@@ -18,7 +19,7 @@ export class customRegister extends HTMLElement {
         <input class="input" name="nickname" placeholder="Nickname" type="text" required>
         <input class="input" name="age" placeholder="Age" type="number" required>
         <select class="input" name="gender" required>
-            <option value="">Select Gender</option>
+            <option value=""><em>Select Gender</em></option>
             <option value="male">Male</option>
             <option value="female">Female</option>
         </select>
@@ -27,7 +28,7 @@ export class customRegister extends HTMLElement {
         <input class="input" name="email" placeholder="Email" type="email" required>
         <input class="input" name="password" placeholder="Password" type="password" required>
 
-        <button class="button-confirm" type="submit">Let's go →</button>
+        <button class="button-confirm">Let's go →</button>
     </form>
 
 </main>
@@ -56,6 +57,7 @@ export class customRegister extends HTMLElement {
         this.querySelector('.form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const formData = new FormData(e.target);
+            console.log('--------', formData)
             let state = await fetchesPost('register', formData);
             console.log('--------', state);
             if (state.BadRequestForm !== true) {

@@ -1,7 +1,8 @@
-import { fetchesPost, socketManager } from "../../utils.js"
+import { fetchesPost, socketManager, updateURL } from "../../utils.js"
 
 export class customLogin extends HTMLElement {
     connectedCallback() {
+        updateURL('login')
         this.constructLogin()
         this.#makeEventListener()
     }
@@ -14,7 +15,7 @@ export class customLogin extends HTMLElement {
         <em>Forum.01,</em><br>
             <span><a href="">tu n'as pas de compte ?</a></span>
         </div>
-        <input class="input" name="email" placeholder="Email" type="email">
+        <input class="input" name="email" placeholder="Email" type="text">
         <input class="input" name="password" placeholder="Password" type="password">
         
         <button class="button-confirm">Let's go →</button>

@@ -1,8 +1,11 @@
+import { updateURL } from "../../utils.js"
 import { CommentForm } from "./CommentForm.js"
 import { DetailPost } from "./DetailPost.js"
 
 export class CommentSection extends HTMLElement {
     connectedCallback() {
+        updateURL('comment')
+        
         if (!customElements.get('custom-detail')) customElements.define('custom-detail', DetailPost)
         if (!customElements.get('custom-comment-form')) customElements.define('custom-comment-form', CommentForm)
 

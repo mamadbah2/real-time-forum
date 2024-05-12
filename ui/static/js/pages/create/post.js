@@ -18,7 +18,7 @@ export class PostForm extends HTMLElement {
 
     renderForm() {
         this.innerHTML = `
-            <main>
+            <main id="createMain">
                 <button id="comeBack">
                 <i class="fa-solid fa-xmark"></i>
                 </button>

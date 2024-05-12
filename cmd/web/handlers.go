@@ -452,6 +452,7 @@ func (app *application) login(w http.ResponseWriter, r *http.Request) {
 			app.clientError(w, r, http.StatusBadRequest)
 			return
 		}
+		app.infoLog.Println(r.PostForm)
 		email := r.PostForm.Get("email")
 		password := r.PostForm.Get("password")
 		if !utils.PasswordValidation(password) {
@@ -460,23 +461,29 @@ func (app *application) login(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		var user *models.User
-		if utils.EmailValidation(email){
+		if utils.EmailValidation(email) {
 			user, err = app.connDB.GetUserByMail(email)
-		}else if utils.UsernameValidation(email){
-			user, err = app.connDB.GetUserByMail(email)
-		}else {
+			if err != nil {
+				fmt.Println("pas de mail sous ce nom")
+				app.renderJSON(w, r, &TemplateData{BadRequestForm: true})
+				return
+			}
+		} else if utils.UsernameValidation(email) {
+			user, err = app.connDB.GetUserByNickname(email)
+			if err != nil {
+				fmt.Println("pas de username sous ce nom")
+				app.renderJSON(w, r, &TemplateData{BadRequestForm: true})
+				return
+			}
+		} else {
+			fmt.Println("problem")
 			app.renderJSON(w, r, &TemplateData{BadRequestForm: true})
 			return
 		}
 
-		if err != nil {
-			app.renderJSON(w, r, &TemplateData{BadRequestForm: true})
-			return
-		}
-		
 		err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
 		if err != nil {
-			http.Redirect(w, r, "/login?bad", http.StatusSeeOther)
+			app.renderJSON(w, r, &TemplateData{BadRequestForm: true})
 			return
 		}
 		/*
@@ -536,11 +543,11 @@ func (app *application) register(w http.ResponseWriter, r *http.Request) {
 		password := r.PostForm.Get("password")
 		age := r.PostForm.Get("age")
 		gender := r.PostForm.Get("gender")
-		firstname := r.PostForm.Get("first-name")
-		lastname := r.PostForm.Get("last-name")
+		firstname := r.PostForm.Get("firstname")
+		lastname := r.PostForm.Get("lastname")
 		fmt.Println("---------", r.PostForm)
 		if !utils.UsernameValidation(username) || !utils.UsernameValidation(firstname) || !utils.UsernameValidation(lastname) || !utils.EmailValidation(email) || !utils.PasswordValidation(password) {
-			// http.Redirect(w, r, "/register?bad", http.StatusSeeOther)
+			// http.Redirect(w, r, "/register?bad", http.StatusSeeOther
 			app.renderJSON(w, r, &TemplateData{BadRequestForm: true})
 			return
 		}
@@ -600,13 +607,13 @@ func (app *application) register(w http.ResponseWriter, r *http.Request) {
 func (app *application) logout(w http.ResponseWriter, r *http.Request) {
 	cookie, err := r.Cookie("session_token")
 	if err == nil {
-		delete(app.Session, cookie.Value)
 		for i, client := range Clients {
-			if (client.idClient == app.Session[cookie.Value]) {
+			if client.idClient == app.Session[cookie.Value] {
 				Clients = append(Clients[:i], Clients[i+1:]...)
-				fmt.Println("Le client ", client, " a ete remove")
+				app.infoLog.Println("Le client ", client, " a ete remove")
 			}
 		}
+		delete(app.Session, cookie.Value)
 	}
 	// http.Redirect(w, r, "/login", http.StatusSeeOther)
 	app.renderJSON(w, r, &TemplateData{BadRequestForm: false})
@@ -636,13 +643,12 @@ func (app *application) chat(w http.ResponseWriter, r *http.Request) {
 		// ON append dans le tableau de client la connexion
 		Clients = append(Clients, Client{idClient: actualUser, Conn: conn})
 		for _, client := range Clients {
-			err := client.Conn.WriteMessage(websocket.TextMessage, []byte("Connecté "+strconv.Itoa(actualUser)))
+			err := client.Conn.WriteMessage(websocket.TextMessage, []byte("##"+strconv.Itoa(actualUser)+"##"))
 			if err != nil {
 				app.serverError(w, r, err)
 				return
 			}
 		}
-		fmt.Println("C'est passé")
 		// Une fois la connexion créée on rentre une infinite loop
 		for {
 			// On lit le message

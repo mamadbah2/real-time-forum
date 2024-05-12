@@ -15,6 +15,7 @@ body {
 
 a {
     text-decoration: none;
+    cursor: pointer;
 }
 
 body #website {
@@ -755,10 +756,20 @@ custom-chat {
    text-align: left;
    cursor: pointer;
    transition: all 200ms linear;
+   display: flex;
+   justify-content: space-between;
 }
 
 #chatBox .list-user:hover {
     border-left: 3px solid var(--bg-header);    
+}
+
+#chatBox .list-user span {
+    display: block;
+    width: 7px;
+    height: 7px;
+    background-color: green;
+    border-radius: 50%;
 }
 
 #chatBox .container .sender-area {

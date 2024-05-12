@@ -1,4 +1,5 @@
 let socket
+export let connectedPerson = []
 
 export const socketManager = {
     get() {
@@ -6,15 +7,21 @@ export const socketManager = {
     },
     set(url) {
         socket = new WebSocket(url) 
-        socket.addEventListener('open', () => { console.log('connexion chat ouverte') })
+        socket.addEventListener('open', () => { 
+            console.log('connexion chat ouverte') 
+        })
         socket.addEventListener('message', (e) => {
             console.log("Message entrant : ", e.data)
             const msgArea = document.querySelector('#chatBox .container .messages-area')
-            if (msgArea == null) {
-                const counterMsg = document.querySelector('#messageBtn .msg-count')
-                counterMsg.textContent = `${parseInt(counterMsg.textContent)+1}`
+            if (/##\d+##/.test(e.data)) {
+                connectedPerson.push(e.data.match(/##(\d+)##/)[1])
             } else {
-                msgArea.innerHTML+= `<div class="message-content r"><p>${e.data.split('\n').slice(0,-1)}</p><span>${new Date().toISOString()}</span></div>`
+                if (msgArea == null) {
+                    const counterMsg = document.querySelector('#messageBtn .msg-count')
+                    counterMsg.textContent = `${parseInt(counterMsg.textContent)+1}`
+                } else {
+                    msgArea.innerHTML+= `<div class="message-content r"><p>${e.data.split('\n').slice(0,-1)}</p><span>${new Date().toISOString()}</span></div>`
+                }
             }
         })
     }
@@ -28,6 +35,12 @@ export const disconnectedManager = {
     setState(newValue) {
         disconnected = newValue
     }
+}
+
+// Update the URL when the user clicks on a page
+export function updateURL(pageName) {
+    var newURL = window.location.origin + '/' + pageName;
+    window.history.pushState({ page: pageName }, null, newURL);
 }
 
 export async function fetches(page) {

@@ -1,4 +1,4 @@
-import { fetches, fetchesPost, socketManager } from "../../utils.js"
+import { connectedPerson, fetches, fetchesPost, socketManager } from "../../utils.js"
 
 
 export class customChat extends HTMLElement {
@@ -11,8 +11,6 @@ export class customChat extends HTMLElement {
         this.constructChat()
         this.userInformation()
     }
-
-    // static socket = socketManager.get()
 
     constructChat() {
         this.innerHTML = `<div id="chatBox">
@@ -55,11 +53,23 @@ export class customChat extends HTMLElement {
 
     async userInformation() {
         const msgArea = this.querySelector('.messages-area')
+        console.log(connectedPerson)
+        // Here We check our connection by showing the length of connectedPerson table
+        if (connectedPerson.length == 0) {
+            document.querySelector('#chatBox .nav-bar a').innerHTML= `<span style="color: red;">Connection failed</span>`
+        }
         fetches('home').then((data) => {
             msgArea.innerHTML = data.UserList.map((u) => {
+                for (let i = 0; i < connectedPerson.length; i++) {
+                    if (connectedPerson[i] == u.User_id) {
+                        return `
+                        <div class="list-user" data-id="${u.User_id}">${u.Username} <span></span></div>
+                        `
+                    }
+                }
                 return `
-                <div class="list-user" data-id="${u.User_id}">${u.Username}</div>
-                `
+                        <div class="list-user" data-id="${u.User_id}">${u.Username} </div>
+                        `
             }).join('')
         }).then(() => { this.#makeEventListener() })
 
@@ -78,13 +88,16 @@ export class customChat extends HTMLElement {
         const msgArea = this.querySelector('.messages-area')
         listUser.forEach(v => {
             v.addEventListener('click', async () => {
+                // We take de receiver Id
                 let receiverId = v.dataset.id
                 senderArea.style.display = "block"
                 senderArea.dataset.id = receiverId
                 try {
+                    // We take the value of form
                     const formData = new FormData()
                     formData.append('receiverId', receiverId)
                     const data = await fetchesPost('chat', formData)
+                    // Here we handle the message
                     if (data.Conversation !== null) {
                         let tabMess = data.Conversation.map((msg) => {
                             if (msg.Receiver_id == receiverId) {

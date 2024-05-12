@@ -20,13 +20,13 @@ export class customHeader extends HTMLElement {
 
                 <nav>
                     <span id="postcreate">
-                        <a href="/create">Ajouter un post</a>
+                        <a>Ajouter un post</a>
                     </span>
                     <span id="postenum">
-                        <a href="/">Liste Postes</a>
+                        <a>Liste Postes</a>
                     </span>
                     <span id="logout">
-                        <a style="color:white" href="/logout">Logout</a>
+                        <a style="color:white">Logout</a>
                     </span>
                 </nav>
             </div>
@@ -72,7 +72,8 @@ export class customHeader extends HTMLElement {
 
         this.querySelector('#postcreate').addEventListener('click', (e) => {
             if (!disconnectedManager.getState()) {
-                invokeTag('post-form', e)
+                e.preventDefault()
+                document.querySelector('body').appendChild(document.createElement('post-form'))
             } else {
                 invokeTag('custom-login', e)
             }
@@ -80,6 +81,29 @@ export class customHeader extends HTMLElement {
 
         this.querySelector('nav span:nth-child(2) > a').addEventListener('click', (e) => {
             e.preventDefault()
+        })
+
+        this.querySelector('#logo').addEventListener('click', () => {
+            const body = document.querySelector('body')
+
+            body.innerHTML = `<div id="website">
+            <custom-header></custom-header>
+            <main>
+            
+            </main>
+            <custom-section></custom-section>
+        </div>`
+
+            setTimeout(() => {
+                body.innerHTML = `<div id="website">
+                <custom-header></custom-header>
+                <main>
+                    <custom-home></custom-home>
+                </main>
+                <custom-section></custom-section>
+            </div>`
+            }, 500);
+
         })
 
     }

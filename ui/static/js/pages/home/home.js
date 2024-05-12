@@ -1,3 +1,4 @@
+import { updateURL } from "../../utils.js"
 import { FilterForm } from "./FilterForm.js"
 import { ListPost } from "./ListPost.js"
 
@@ -8,6 +9,7 @@ export class HomeSection extends HTMLElement {
     }
 
     constructHomeSection() {
+        updateURL('my_home')
         if (!customElements.get("custom-filter")) customElements.define("custom-filter", FilterForm)
         if (!customElements.get("custom-posts")) customElements.define("custom-posts", ListPost)
         this.innerHTML = `

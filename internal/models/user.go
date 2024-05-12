@@ -38,7 +38,7 @@ func (m *ConnDB) SetUser(username string, age int, gender, firstname, lastname, 
 }
 
 func (m *ConnDB) GetUserByMail(email string) (*User, error) {
-	statement := `SELECT * FROM User WHERE email = ?`
+	statement := `SELECT user_id, username, email, password FROM User WHERE email = ?`
 	row := m.DB.QueryRow(statement, email)
 	user := &User{}
 	err := row.Scan(&user.User_id, &user.Username, &user.Email, &user.Password)
@@ -48,8 +48,8 @@ func (m *ConnDB) GetUserByMail(email string) (*User, error) {
 	return user, nil
 }
 
-func (m *ConnDB) GetUserBynickname(username string) (*User, error) {
-	statement := `SELECT user_id, username, password FROM User WHERE username = ?`
+func (m *ConnDB) GetUserByNickname(username string) (*User, error) {
+	statement := `SELECT user_id, username, email, password FROM User WHERE username = ?`
 	row := m.DB.QueryRow(statement, username)
 	user := &User{}
 	err := row.Scan(&user.User_id, &user.Username, &user.Email, &user.Password)
