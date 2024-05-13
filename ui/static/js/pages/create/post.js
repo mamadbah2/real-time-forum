@@ -8,12 +8,14 @@ export class PostForm extends HTMLElement {
 
     async fetchCategories() {
         const creatData = await fetches('home')
-        document.querySelector('.checkCategory').innerHTML = ` ${creatData.Categores.map(category => `
+        console.log(this.querySelector('.checkCategory'))
+        this.querySelector('.checkCategory').innerHTML = `${creatData.Categores.map(category => `
             <label for="${category.Name}">
                 <input type="checkbox" name="categorCheck" value="${category.Category_id}" id="${category.Name}">
                 <span>${category.Name}</span>
             </label>
         `).join('')}`
+        this.#makeEventListener();
     }
 
     renderForm() {
@@ -45,7 +47,6 @@ export class PostForm extends HTMLElement {
                 </form>
             </main>
         `;
-        this.#makeEventListener();
     }
 
     #makeEventListener() {

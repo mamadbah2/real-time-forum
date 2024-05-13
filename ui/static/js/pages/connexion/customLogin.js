@@ -2,7 +2,7 @@ import { fetchesPost, socketManager, updateURL } from "../../utils.js"
 
 export class customLogin extends HTMLElement {
     connectedCallback() {
-        updateURL('login')
+        // updateURL('login')
         this.constructLogin()
         this.#makeEventListener()
     }

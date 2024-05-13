@@ -2,7 +2,7 @@ import { fetchesPost, socketManager, updateURL } from "../../utils.js";
 
 export class customRegister extends HTMLElement {
     connectedCallback() {
-        updateURL('register')
+        // updateURL('register')
         this.constructRegister();
         this.#makeEventListener();
         // this.#registereventlister()

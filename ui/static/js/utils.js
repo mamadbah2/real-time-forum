@@ -21,6 +21,12 @@ export const socketManager = {
                     counterMsg.textContent = `${parseInt(counterMsg.textContent)+1}`
                 } else {
                     msgArea.innerHTML+= `<div class="message-content r"><p>${e.data.split('\n').slice(0,-1)}</p><span>${new Date().toISOString()}</span></div>`
+                    
+                    // A chaque fois qu'on reçoi un mess alors on enleve un message pour avoir un max de 10 
+                    const msgDivs = msgArea.querySelectorAll('.message-content')
+                    if (msgDivs.length >= 10) {
+                        msgArea.querySelector('.message-content').remove()
+                    }
                 }
             }
         })
@@ -39,8 +45,9 @@ export const disconnectedManager = {
 
 // Update the URL when the user clicks on a page
 export function updateURL(pageName) {
-    var newURL = window.location.origin + '/' + pageName;
-    window.history.pushState({ page: pageName }, null, newURL);
+    console.log(pageName)
+    /* var newURL = window.location.origin + '/' + pageName;
+    window.history.pushState({ page: pageName }, null, newURL); */
 }
 
 export async function fetches(page) {

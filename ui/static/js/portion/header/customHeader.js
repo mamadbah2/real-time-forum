@@ -22,9 +22,6 @@ export class customHeader extends HTMLElement {
                     <span id="postcreate">
                         <a>Ajouter un post</a>
                     </span>
-                    <span id="postenum">
-                        <a>Liste Postes</a>
-                    </span>
                     <span id="logout">
                         <a style="color:white">Logout</a>
                     </span>
@@ -74,6 +71,7 @@ export class customHeader extends HTMLElement {
             if (!disconnectedManager.getState()) {
                 e.preventDefault()
                 document.querySelector('body').appendChild(document.createElement('post-form'))
+                document.querySelector('#bar-filter').innerHTML = ''
             } else {
                 invokeTag('custom-login', e)
             }

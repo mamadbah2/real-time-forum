@@ -56,7 +56,7 @@ export class customChat extends HTMLElement {
         console.log(connectedPerson)
         // Here We check our connection by showing the length of connectedPerson table
         if (connectedPerson.length == 0) {
-            document.querySelector('#chatBox .nav-bar a').innerHTML= `<span style="color: red;">Connection failed</span>`
+            document.querySelector('#chatBox .nav-bar a').innerHTML = `<span style="color: red;">Connection failed</span>`
         }
         fetches('home').then((data) => {
             msgArea.innerHTML = data.UserList.map((u) => {
@@ -78,9 +78,15 @@ export class customChat extends HTMLElement {
     #makeEventListener() {
         const closeBtn = this.querySelector('.close')
         const senderArea = this.querySelector('.sender-area')
-
+        let idIntervalScroll, idTimeoutScroll
         closeBtn.addEventListener('click', () => {
             this.remove()
+            if (idIntervalScroll) {
+                clearInterval(idIntervalScroll)
+            }
+            if (idTimeoutScroll) {
+                clearTimeout(idTimeoutScroll)
+            }
         })
 
         // conversation
@@ -105,11 +111,34 @@ export class customChat extends HTMLElement {
                             }
                             return [msg.Message_id, `<div class="message-content s"><p>${msg.Content}</p><span>${msg.Date_Creation}</span></div>`]
                         })
+                        // Tri du tableau de message selon l'id des messages
                         tabMess.sort((a, b) => a[0] - b[0]);
-                        console.log("tab : ", tabMess);
-                        msgArea.innerHTML = `${tabMess.map((msg) => {
+
+                        let partFactor = 1
+                        let latest = tabMess.slice(-11 * partFactor, -1)
+
+                        // Affichage des messages contenus dans le tableau latest
+                        msgArea.innerHTML = `${latest.map((msg) => {
                             return msg[1]
                         }).join('')}`
+                        msgArea.scrollTo(0, msgArea.scrollHeight)
+
+                        // Bout de code permettant de traiter le scroll
+                        idIntervalScroll = setInterval(() => {
+                            if (msgArea.scrollTop == 0) {
+                                    partFactor += 1
+                                    let firstPos = msgArea.scrollHeight
+                                    latest = tabMess.slice(-11 * partFactor, -1)
+                                    // Affichage des messages contenus dans le tableau
+                                    msgArea.innerHTML = `${latest.map((msg) => {
+                                        return msg[1]
+                                    }).join('')}`
+                                    let finalPos = msgArea.scrollHeight - firstPos
+                                    msgArea.scrollTo(0, finalPos)
+                                    console.log(finalPos);
+
+                            }
+                        }, 1000)
                     } else {
                         msgArea.innerHTML = ``
                     }
@@ -127,15 +156,23 @@ export class customChat extends HTMLElement {
         senderIcone.addEventListener('click', async () => {
             if (sendInput.value !== "") {
                 try {
-                    socketManager.get().send(sendInput.value+"\n"+senderArea.dataset.id)
-                    msgArea.innerHTML+= `<div class="message-content s"><p>${sendInput.value}</p><span>${new Date().toISOString()}</span></div>`
+                    socketManager.get().send(sendInput.value + "\n" + senderArea.dataset.id)
+                    msgArea.innerHTML += `<div class="message-content s"><p>${sendInput.value}</p><span>${new Date().toISOString()}</span></div>`
                     sendInput.value = ''
-                    
+
+                    //On essaie de gerer le debounce du scroll du real time
+                    const msgDivs = msgArea.querySelectorAll('.message-content')
+                    if (msgDivs.length >= 10) {
+                        msgArea.querySelector('.message-content').remove()
+                    }
+
+
                 } catch (error) {
                     console.error('Error:', error);
                 }
-            } 
+            }
         });
+        this.scrollTop
     }
 
 }
