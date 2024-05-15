@@ -53,6 +53,12 @@ export class SectionFoot extends HTMLElement {
                     cc.remove()
                 }
                 this.appendChild(document.createElement('custom-chat'))
+                
+                // On enleve le notif counter
+                const msgCount = this.querySelector('.inbox-btn .msg-count')
+                if (msgCount.textContent != '0') {
+                    msgCount.textContent = '0'
+                }
             } 
 
         })

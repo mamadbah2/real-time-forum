@@ -1,5 +1,4 @@
-import { connectedPerson, fetches, fetchesPost, socketManager } from "../../utils.js"
-
+import { connectedPerson, fetches, fetchesPost, notificatedPerson, socketManager } from "../../utils.js"
 
 export class customChat extends HTMLElement {
     /* constructor() {
@@ -58,8 +57,17 @@ export class customChat extends HTMLElement {
         if (connectedPerson.length == 0) {
             document.querySelector('#chatBox .nav-bar a').innerHTML = `<span style="color: red;">Connection failed</span>`
         }
+        console.log(notificatedPerson)
         fetches('home').then((data) => {
             msgArea.innerHTML = data.UserList.map((u) => {
+                for (let i = 0; i < notificatedPerson.length; i++) {
+                    if (notificatedPerson[i] == u.User_id) {
+                        notificatedPerson.splice(i, 1)
+                        return `
+                        <div class="list-user" data-id="${u.User_id}">${u.Username} <span class="o"></span></div>
+                        `
+                    }
+                }
                 for (let i = 0; i < connectedPerson.length; i++) {
                     if (connectedPerson[i] == u.User_id) {
                         return `
@@ -94,51 +102,60 @@ export class customChat extends HTMLElement {
         const msgArea = this.querySelector('.messages-area')
         listUser.forEach(v => {
             v.addEventListener('click', async () => {
+
                 // We take de receiver Id
                 let receiverId = v.dataset.id
                 senderArea.style.display = "block"
                 senderArea.dataset.id = receiverId
+
+                // We remove the notification
+                const notifSpan = v.querySelector('.o')
+                if (notifSpan) notifSpan.classList.remove('o')
+
                 try {
                     // We take the value of form
                     const formData = new FormData()
                     formData.append('receiverId', receiverId)
                     const data = await fetchesPost('chat', formData)
+
                     // Here we handle the message
                     if (data.Conversation !== null) {
+                        console.log(data.Conversation)
                         let tabMess = data.Conversation.map((msg) => {
+                            console.log("msg.Receiver_id : ", msg.Receiver_id, "msg.Sender_id : ", msg.Sender_id)
                             if (msg.Receiver_id == receiverId) {
-                                return [msg.Message_id, `<div class="message-content r"><p>${msg.Content}</p><span>${msg.Date_Creation}</span></div>`]
+                                return [msg.Message_id, `<div class="message-content s"><p>${msg.Content}</p><span>${msg.Date_Creation}</span></div>`]
                             }
-                            return [msg.Message_id, `<div class="message-content s"><p>${msg.Content}</p><span>${msg.Date_Creation}</span></div>`]
+                            return [msg.Message_id, `<div class="message-content r"><p>${msg.Content}</p><span>${msg.Date_Creation}</span></div>`]
                         })
+
                         // Tri du tableau de message selon l'id des messages
                         tabMess.sort((a, b) => a[0] - b[0]);
 
-                        let partFactor = 1
-                        let latest = tabMess.slice(-11 * partFactor, -1)
+                        // let partFactor = 1
+                        // let latest = tabMess.slice(-10 * partFactor, tabMess.length)
 
                         // Affichage des messages contenus dans le tableau latest
-                        msgArea.innerHTML = `${latest.map((msg) => {
+                        msgArea.innerHTML = `${tabMess.map((msg) => {
                             return msg[1]
                         }).join('')}`
                         msgArea.scrollTo(0, msgArea.scrollHeight)
 
                         // Bout de code permettant de traiter le scroll
-                        idIntervalScroll = setInterval(() => {
-                            if (msgArea.scrollTop == 0) {
-                                    partFactor += 1
-                                    let firstPos = msgArea.scrollHeight
-                                    latest = tabMess.slice(-11 * partFactor, -1)
-                                    // Affichage des messages contenus dans le tableau
-                                    msgArea.innerHTML = `${latest.map((msg) => {
-                                        return msg[1]
-                                    }).join('')}`
-                                    let finalPos = msgArea.scrollHeight - firstPos
-                                    msgArea.scrollTo(0, finalPos)
-                                    console.log(finalPos);
-
+                        /* idIntervalScroll = setInterval(() => {
+                            if (msgArea.scrollTop == 0 && msgArea.scrollHeight >= msgArea.clientHeight + 10) {
+                                partFactor += 1
+                                let firstPos = msgArea.scrollHeight
+                                latest = tabMess.slice(-10 * partFactor, tabMess.length)
+                                // Affichage des messages contenus dans le tableau
+                                msgArea.innerHTML = `${latest.map((msg) => {
+                                    return msg[1]
+                                }).join('')}`
+                                let finalPos = msgArea.scrollHeight - firstPos
+                                msgArea.scrollTo(0, finalPos)
                             }
-                        }, 1000)
+                        }, 1000) */
+
                     } else {
                         msgArea.innerHTML = ``
                     }
@@ -159,12 +176,13 @@ export class customChat extends HTMLElement {
                     socketManager.get().send(sendInput.value + "\n" + senderArea.dataset.id)
                     msgArea.innerHTML += `<div class="message-content s"><p>${sendInput.value}</p><span>${new Date().toISOString()}</span></div>`
                     sendInput.value = ''
+                    msgArea.scrollTo(0, msgArea.scrollHeight)
 
                     //On essaie de gerer le debounce du scroll du real time
-                    const msgDivs = msgArea.querySelectorAll('.message-content')
+                    /* const msgDivs = msgArea.querySelectorAll('.message-content')
                     if (msgDivs.length >= 10) {
                         msgArea.querySelector('.message-content').remove()
-                    }
+                    } */
 
 
                 } catch (error) {
@@ -172,7 +190,26 @@ export class customChat extends HTMLElement {
                 }
             }
         });
-        this.scrollTop
+
+        let lastTime = Date.now()
+        let exe = false
+        let stopTimeOut
+        sendInput.addEventListener('keydown', () => {
+            if (!exe) {
+                socketManager.get().send("==typing==" + "\n" + senderArea.dataset.id)
+                exe = true
+            }
+            let currentTime = Date.now()
+            if (currentTime - lastTime <= 800) {
+                if (stopTimeOut) clearTimeout(stopTimeOut)
+                stopTimeOut = setTimeout(() => {
+                    socketManager.get().send("==stop==" + "\n" + senderArea.dataset.id)
+                    exe = false
+                }, 800)
+            } 
+            lastTime = currentTime
+        })
+
     }
 
 }

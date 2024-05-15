@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -642,8 +643,12 @@ func (app *application) chat(w http.ResponseWriter, r *http.Request) {
 
 		// ON append dans le tableau de client la connexion
 		Clients = append(Clients, Client{idClient: actualUser, Conn: conn})
+		var connectedPers string 
 		for _, client := range Clients {
-			err := client.Conn.WriteMessage(websocket.TextMessage, []byte("##"+strconv.Itoa(actualUser)+"##"))
+			connectedPers += strconv.Itoa(client.idClient) + "-"
+		}
+		for _, client := range Clients {
+			err := client.Conn.WriteMessage(websocket.TextMessage, []byte("##"+connectedPers[:len(connectedPers)-1]+"##"))
 			if err != nil {
 				app.serverError(w, r, err)
 				return
@@ -668,11 +673,17 @@ func (app *application) chat(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			// On met le message dans la base de donnée
-			_, err = app.connDB.SetMessage(text, actualUser, receiverId)
-			if err != nil {
-				app.serverError(w, r, err)
-				return
+			// On met le message dans la base de donnée si ce n'est pas un mot clé venu de l'user
+			regex := regexp.MustCompile(`==(.*?)==`)
+			match := regex.MatchString(text)
+
+			if !match {
+				_, err = app.connDB.SetMessage(text, actualUser, receiverId)
+				if err != nil {
+					app.serverError(w, r, err)
+					return
+				}
+
 			}
 
 			//On le redistribue à l'ayant droit
