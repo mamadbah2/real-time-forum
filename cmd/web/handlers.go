@@ -63,7 +63,7 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 		}
 		badRequest := false
 
-		allUser, err := app.connDB.GetAllUser()
+		allUser, err := app.connDB.GetAllUserSortedByLastSent(actualUser)
 		if err != nil {
 			app.serverError(w, r, err)
 			return
@@ -643,7 +643,7 @@ func (app *application) chat(w http.ResponseWriter, r *http.Request) {
 
 		// ON append dans le tableau de client la connexion
 		Clients = append(Clients, Client{idClient: actualUser, Conn: conn})
-		var connectedPers string 
+		var connectedPers string
 		for _, client := range Clients {
 			connectedPers += strconv.Itoa(client.idClient) + "-"
 		}
@@ -659,8 +659,8 @@ func (app *application) chat(w http.ResponseWriter, r *http.Request) {
 			// On lit le message
 			msgType, msg, err := conn.ReadMessage()
 			if err != nil {
-				app.serverError(w, r, err)
-				return
+				app.errorLog.Println(err)
+				break
 			}
 
 			// On recupere id du receiver contenu implicitement dans le msg
@@ -687,6 +687,7 @@ func (app *application) chat(w http.ResponseWriter, r *http.Request) {
 			}
 
 			//On le redistribue à l'ayant droit
+			msg = append(msg, []byte("-"+strconv.Itoa(actualUser))...)
 			for _, clt := range Clients {
 				if clt.idClient == receiverId {
 					// Envoyer le message au client destinataire

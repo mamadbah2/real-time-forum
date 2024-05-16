@@ -57,7 +57,7 @@ export class customChat extends HTMLElement {
         if (connectedPerson.length == 0) {
             document.querySelector('#chatBox .nav-bar a').innerHTML = `<span style="color: red;">Connection failed</span>`
         }
-        console.log(notificatedPerson)
+
         fetches('home').then((data) => {
             msgArea.innerHTML = data.UserList.map((u) => {
                 for (let i = 0; i < notificatedPerson.length; i++) {
@@ -120,13 +120,14 @@ export class customChat extends HTMLElement {
 
                     // Here we handle the message
                     if (data.Conversation !== null) {
-                        console.log(data.Conversation)
+                        let you = v.textContent
+                        let me = document.querySelector('#ownerUsername').textContent
                         let tabMess = data.Conversation.map((msg) => {
                             console.log("msg.Receiver_id : ", msg.Receiver_id, "msg.Sender_id : ", msg.Sender_id)
                             if (msg.Receiver_id == receiverId) {
-                                return [msg.Message_id, `<div class="message-content s"><p>${msg.Content}</p><span>${msg.Date_Creation}</span></div>`]
+                                return [msg.Message_id, `<div class="message-content s"><span>${me}</span><p>${msg.Content}</p><span>${msg.Date_Creation}</span></div>`]
                             }
-                            return [msg.Message_id, `<div class="message-content r"><p>${msg.Content}</p><span>${msg.Date_Creation}</span></div>`]
+                            return [msg.Message_id, `<div class="message-content r"><span>${you}</span><p>${msg.Content}</p><span>${msg.Date_Creation}</span></div>`]
                         })
 
                         // Tri du tableau de message selon l'id des messages
@@ -172,19 +173,14 @@ export class customChat extends HTMLElement {
         const sendInput = this.querySelector('.send-input');
         senderIcone.addEventListener('click', async () => {
             if (sendInput.value !== "") {
+                let you = this.querySelector('#chatBox .nav-bar > a')
+                let me = document.querySelector('#ownerUsername').textContent
                 try {
                     socketManager.get().send(sendInput.value + "\n" + senderArea.dataset.id)
-                    msgArea.innerHTML += `<div class="message-content s"><p>${sendInput.value}</p><span>${new Date().toISOString()}</span></div>`
+                    msgArea.innerHTML += `<div class="message-content s"><span>${me}</span><p>${sendInput.value}</p><span>${new Date().toISOString()}</span></div>`
+
                     sendInput.value = ''
                     msgArea.scrollTo(0, msgArea.scrollHeight)
-
-                    //On essaie de gerer le debounce du scroll du real time
-                    /* const msgDivs = msgArea.querySelectorAll('.message-content')
-                    if (msgDivs.length >= 10) {
-                        msgArea.querySelector('.message-content').remove()
-                    } */
-
-
                 } catch (error) {
                     console.error('Error:', error);
                 }
@@ -206,7 +202,7 @@ export class customChat extends HTMLElement {
                     socketManager.get().send("==stop==" + "\n" + senderArea.dataset.id)
                     exe = false
                 }, 800)
-            } 
+            }
             lastTime = currentTime
         })
 

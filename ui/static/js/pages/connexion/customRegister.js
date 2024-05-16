@@ -44,14 +44,14 @@ export class customRegister extends HTMLElement {
         });
 
         // Lorsqu'on clique sur Forum01 on revient à la page d'accueil
-        this.querySelector('.title em').addEventListener('click', (e) => {
+        /* this.querySelector('.title em').addEventListener('click', (e) => {
             document.querySelector('#website').innerHTML = `<custom-header></custom-header>
             <main>
                 <custom-home></custom-home>
             </main>
             <custom-section></custom-section>`;
             this.remove();
-        });
+        }); */
 
         // Lorsqu'on soumet le formulaire 
         this.querySelector('.form').addEventListener('submit', async (e) => {

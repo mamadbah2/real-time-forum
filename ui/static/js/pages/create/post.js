@@ -47,6 +47,7 @@ export class PostForm extends HTMLElement {
                 </form>
             </main>
         `;
+
     }
 
     #makeEventListener() {
@@ -55,6 +56,10 @@ export class PostForm extends HTMLElement {
         const imgArea = this.querySelector('.img-area');
         const btnBack = this.querySelector('#comeBack');
         const btnSubmitForm = this.querySelector('form input[name="createPost"]')
+        const body = document.querySelector('body')
+
+        window.scrollTo(0, 0)
+        body.style.overflow= 'hidden'
 
         btnBack.addEventListener('click', (e) => {
             e.preventDefault()
@@ -64,6 +69,7 @@ export class PostForm extends HTMLElement {
             </main>
             <custom-section></custom-section>`
             this.remove()
+            body.style.overflow= 'scroll'
         })
 
         // Evenement du formulaire visant a creer le post
@@ -81,7 +87,7 @@ export class PostForm extends HTMLElement {
                 } else {
                     this.querySelector('.Error').textContent = "Veiller entrer de bonnes valeurs aux champs du formulaire"
                 }
-            }).catch((reason)=> {
+            }).catch((reason) => {
                 throw new Error(reason)
             })
         })

@@ -15,5 +15,5 @@ customElements.define('custom-register', customRegister)
 customElements.define('custom-comment', CommentSection)
 customElements.define('custom-chat', customChat)
 // customElements.define('post-list', PostList);
-
 customElements.define('post-form', PostForm);
+

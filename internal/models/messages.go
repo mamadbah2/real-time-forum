@@ -1,7 +1,6 @@
 package models
 
 import (
-	"fmt"
 	"time"
 )
 
@@ -29,7 +28,6 @@ func (m *ConnDB) GetMessagesByConversation(senderId, receiverId int) ([]*Message
 		}
 		Messages = append(Messages, m)
 	}
-	fmt.Println(Messages)
 	return Messages, nil
 }
 

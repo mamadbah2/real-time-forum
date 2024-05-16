@@ -1,5 +1,9 @@
 package models
 
+import (
+	"strings"
+)
+
 type User struct {
 	User_id        int
 	Username       string
@@ -25,16 +29,16 @@ func (m *ConnDB) GetUser(id int) (*User, error) {
 }
 
 func (m *ConnDB) SetUser(username string, age int, gender, firstname, lastname, email, password string) (int, error) {
-    statement := `INSERT INTO User(username, age, gender, firstname, lastname, email, password) VALUES (?, ?, ?, ?, ?, ?, ?)`
-    result, err := m.DB.Exec(statement, username, age, gender, firstname, lastname, email, password)
-    if err != nil {
-        return 0, err
-    }
-    id, err := result.LastInsertId()
-    if err != nil {
-        return 0, err
-    }
-    return int(id), nil
+	statement := `INSERT INTO User(username, age, gender, firstname, lastname, email, password) VALUES (?, ?, ?, ?, ?, ?, ?)`
+	result, err := m.DB.Exec(statement, strings.ToLower(username), age, gender, firstname, lastname, email, password)
+	if err != nil {
+		return 0, err
+	}
+	id, err := result.LastInsertId()
+	if err != nil {
+		return 0, err
+	}
+	return int(id), nil
 }
 
 func (m *ConnDB) GetUserByMail(email string) (*User, error) {
@@ -59,8 +63,8 @@ func (m *ConnDB) GetUserByNickname(username string) (*User, error) {
 	return user, nil
 }
 
-func (m *ConnDB) GetAllUser() ([]*User, error) {
-	statement := `SELECT user_id, username FROM User`
+func (m *ConnDB) GetAllUserSortedByLastSent(actualUser int) ([]*User, error) {
+	statement := `SELECT user_id, username FROM User ORDER BY username ASC`
 	rows, err := m.DB.Query(statement)
 	if err != nil {
 		return nil, err
@@ -75,5 +79,37 @@ func (m *ConnDB) GetAllUser() ([]*User, error) {
 		}
 		users = append(users, u)
 	}
-	return users, nil
+
+	// Recuperation par dernier envoyeur
+	statement = `SELECT DISTINCT m.receiver_id, u.username FROM Messages m INNER JOIN User u ON m.receiver_id = u.user_id WHERE m.sender_id = ? ORDER BY m.creation_date DESC`
+	rows, err = m.DB.Query(statement, actualUser)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var usersMsg []*User
+	for rows.Next() {
+		u := &User{}
+		err = rows.Scan(&u.User_id, &u.Username)
+		if err != nil {
+			return nil, err
+		}
+		usersMsg = append(usersMsg, u)
+	}
+
+	var sortedTable []*User
+	sortedTable = append(sortedTable, usersMsg...)
+	for _, us := range users {
+		added := true
+		for _, sus := range sortedTable {
+			if us.User_id == sus.User_id {
+				added = false
+				break
+			}
+		}
+		if added {
+			sortedTable = append(sortedTable, us)
+		}
+	}
+	return sortedTable, nil
 }

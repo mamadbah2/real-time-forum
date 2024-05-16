@@ -15,6 +15,7 @@ export const socketManager = {
             console.log("Message entrant : ", e.data)
             const msgArea = document.querySelector('#chatBox .container .messages-area')
             let trace = e.data.split('\n')
+            let ids = trace[trace.length - 1].split('-')
 
             // Decryptage de la reponse du server voir si c'est la first connection
             if (/##(.*?)##/g.test(e.data)) {
@@ -24,50 +25,59 @@ export const socketManager = {
                     connectedPerson = serie.split('-').map(Number)
                     console.log("Connected Pers : ", connectedPerson);
                 }
-            } else if (/==(.*?)==/g.test(e.data)) {
+            } else if (/==(.*?)==/g.test(e.data)) { // Decryptage de la reponse du server voir le typing progr.
                 let text = e.data
                 let serie = text.match(/==(.*?)==/)[1]
                 console.log(serie)
                 if (msgArea != null) {
                     if (msgArea.querySelector('.list-user') == null) {
                         if (serie == "typing") {
-                            msgArea.innerHTML += `<div class="message-content r"><p> <div class="loading-wave">
-                            <div class="loading-bar"></div>
-                            <div class="loading-bar"></div>
-                            <div class="loading-bar"></div>
-                            <div class="loading-bar"></div>
-                          </div>
-                          </p></div>`
+                            msgArea.innerHTML += `<div class="message-content r lasta" style="background:#828E9E">
+                            <div class="loading-wave">
+                                <div class="loading-bar"></div>
+                                <div class="loading-bar"></div>
+                                <div class="loading-bar"></div>
+                                <div class="loading-bar"></div>
+                            </div>
+                          </div>`
+                            msgArea.scrollTo(0, msgArea.scrollHeight)
+
                         } else if (serie == "stop") {
-                            msgArea.lastChild.remove()
+                            // msgArea.lastChild.remove()
+                            msgArea.querySelector('.lasta').remove()
                         }
 
                     } else {
-                         // Lorsqu'il tape et qu'on a la list d'user en face
+                        // Lorsqu'il tape et qu'on a la list d'user en face
+                        const div = msgArea.querySelector(`div[data-id='${ids[1]}']`)
+                        const span = div.querySelector('span')
+                        if (serie == "typing") {
+                            const subdiv = document.createElement('p')
+                            subdiv.textContent = 'écrit...'
+                            div.appendChild(subdiv)
+                            span.style.visibility='hidden'
+                        } else if (serie == "stop") {
+                            div.querySelector('p').remove()
+                            span.style.visibility = 'visible'
+                        }
                     }
                 }
             } else {
                 if (msgArea == null) {
                     const counterMsg = document.querySelector('#messageBtn .msg-count')
                     counterMsg.textContent = `${parseInt(counterMsg.textContent) + 1}`
-                    
-                    notificatedPerson.push(trace[trace.length - 1])
+                    notificatedPerson.push(ids[1])
                     console.log("notifPers", notificatedPerson)
                 } else if (msgArea.querySelector('.list-user') == null) {
-                    msgArea.innerHTML += `<div class="message-content r"><p>${e.data.split('\n').slice(0, -1)}</p><span>${new Date().toISOString()}</span></div>`
-
-                    // A chaque fois qu'on reçoi un mess alors on enleve un message pour avoir un max de 10 
-                    /* const msgDivs = msgArea.querySelectorAll('.message-content')
-                    if (msgDivs.length >= 10) {
-                        msgArea.querySelector('.message-content').remove()
-                    } */
+                    let you = document.querySelector('#chatBox .nav-bar > a').textContent
+                    msgArea.innerHTML += `<div class="message-content r"><span>${you}</span><p>${trace[0]}</p><span>${new Date().toISOString()}</span></div>`
+                    msgArea.scrollTo(0, msgArea.scrollHeight)
                 } else if (msgArea.querySelector('.list-user') != null) {
-                    const div = msgArea.querySelector(`div[data-id='${trace[trace.length - 1]}'] span`)
+                    const div = msgArea.querySelector(`div[data-id='${ids[1]}'] span`)
                     div.className = 'o'
                 }
             }
 
-            msgArea.scrollTo(0, msgArea.scrollHeight)
         })
     }
 }
@@ -88,6 +98,12 @@ export function updateURL(pageName) {
     /* var newURL = window.location.origin + '/' + pageName;
     window.history.pushState({ page: pageName }, null, newURL); */
 }
+
+// En cas de reactualisation du navigateur
+window.addEventListener('beforeunload', async (e)=>{
+    e.preventDefault()
+    await fetches('logout')
+})
 
 export async function fetches(page) {
     const response = await fetch(`http://localhost:4000/${page}`, { method: "GET" })

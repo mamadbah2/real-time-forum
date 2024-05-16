@@ -34,14 +34,14 @@ export class customLogin extends HTMLElement {
         })
 
         // Lorsqu'on clique sur Forum01 on revient à la page d'accueil
-        this.querySelector('.title em').addEventListener('click', () => {
+        /* this.querySelector('.title em').addEventListener('click', () => {
             document.querySelector('#website').innerHTML = `<custom-header></custom-header>
             <main>
                 <custom-home></custom-home>
             </main>
             <custom-section></custom-section>`
             this.remove()
-        })
+        }) */
 
         // Lorsqu'on soumet le formulaire 
         this.querySelector('.form').addEventListener('submit', async (e) => {

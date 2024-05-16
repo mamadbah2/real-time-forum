@@ -1,12 +1,12 @@
 INSERT INTO User (username, age, gender, firstname, lastname, email, `password`)
 VALUES 
-    ('AliceSmith', 25, 'Female', 'Alice', 'Smith', 'alice.smith@example.com', 'MotDePasse123'),
-    ('BobJohnson', 30, 'Male', 'Bob', 'Johnson', 'bob.johnson@example.com', 'Secret456'),
+    ('alicemith', 25, 'Female', 'Alice', 'Smith', 'alice.smith@example.com', 'MotDePasse123'),
+    ('bobohnson', 30, 'Male', 'Bob', 'Johnson', 'bob.johnson@example.com', 'Secret456'),
     ('fatima', 40, 'Female', 'Fatima', 'Gn', 'fatima@fatima.gn', '$2a$12$S3254YLmkrIEOXmdYXo73OL6URt9Y.ccelnjwMsenQxvH8VlRymby'),
-    ('CharlieBrown', 28, 'Male', 'Charlie', 'Brown', 'charlie.brown@example.com', 'P@ssw0rd'),
-    ('DavidMiller', 35, 'Male', 'David', 'Miller', 'david.miller@example.com', 'Secure789'),
-    ('EmmaWhite', 22, 'Female', 'Emma', 'White', 'emma.white@example.com', 'Confidential987'),
-    ('boboDeNar', 45, 'Other', 'Bobo', 'DeNar', 'bahs@gmail.com', '$2a$12$Sa.9gDTECdrMfKK/rWYaHuUJZtzgnmiwk9i7mroAzUyscgsDDo4Zy');
+    ('charliebrown', 28, 'Male', 'Charlie', 'Brown', 'charlie.brown@example.com', 'P@ssw0rd'),
+    ('davidmiller', 35, 'Male', 'David', 'Miller', 'david.miller@example.com', 'Secure789'),
+    ('emmawhite', 22, 'Female', 'Emma', 'White', 'emma.white@example.com', 'Confidential987'),
+    ('bobodenar', 45, 'Other', 'Bobo', 'DeNar', 'bahs@gmail.com', '$2a$12$Sa.9gDTECdrMfKK/rWYaHuUJZtzgnmiwk9i7mroAzUyscgsDDo4Zy');
 -- Insertion de données fictives dans la table Category
 INSERT INTO Category (name)
 VALUES ('Religion'),

@@ -784,6 +784,10 @@ custom-chat {
     border-radius: 50%;
 }
 
+#chatBox .list-user p {
+    margin: 0;
+}
+
 #chatBox .list-user .o {
     display: block;
     width: 7px;
