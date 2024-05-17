@@ -48,8 +48,6 @@ export class customHeader extends HTMLElement {
             <p>${data.UserInfo.Email} </p>
             <p><strong>Status </strong> <span class="connected">Connected</span></p>
             <p id="ownerId" style="display:none">${data.UserInfo.User_id} </p>
-            <p>${data.UserInfo.LikeCounter} Like(s) <i class="fa-regular fa-thumbs-up"></i></p>
-            <p>${data.UserInfo.CommentCounter} Comment(s) <i class="fa-regular fa-comments"></i></p>
             `;
         }
 

@@ -547,7 +547,7 @@ func (app *application) register(w http.ResponseWriter, r *http.Request) {
 		firstname := r.PostForm.Get("firstname")
 		lastname := r.PostForm.Get("lastname")
 		fmt.Println("---------", r.PostForm)
-		if !utils.UsernameValidation(username) || !utils.UsernameValidation(firstname) || !utils.UsernameValidation(lastname) || !utils.EmailValidation(email) || !utils.PasswordValidation(password) {
+		if !utils.UsernameValidation(username) || !utils.EmailValidation(email) || !utils.PasswordValidation(password) {
 			// http.Redirect(w, r, "/register?bad", http.StatusSeeOther
 			app.renderJSON(w, r, &TemplateData{BadRequestForm: true})
 			return

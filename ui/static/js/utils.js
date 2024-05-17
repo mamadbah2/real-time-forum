@@ -10,8 +10,11 @@ export const tabMessManager = {
         tabMess = value
     },
     add(value) {
-        let lastId = parseInt(tabMess[tabMess.length - 1][0])
-        tabMess.push([lastId + 1, value])
+        if (tabMess) {
+            let lastId = parseInt(tabMess[tabMess.length - 1][0])
+            tabMess.push([lastId + 1, value])
+
+        }
     }
 }
 
@@ -61,7 +64,7 @@ export const socketManager = {
                                 </div>
                               </div>`
                                 msgArea.scrollTo(0, msgArea.scrollHeight)
-    
+
                             } else if (serie == "stop") {
                                 // msgArea.lastChild.remove()
                                 msgArea.querySelector('.lasta').remove()
