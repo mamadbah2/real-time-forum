@@ -753,7 +753,7 @@ custom-chat {
 #chatBox .container .messages-area {
     background-color: gray;
     width: 100%;
-    min-height: 200px;
+    min-height: 235px;
     overflow: scroll;
 
 }
@@ -876,6 +876,7 @@ custom-chat {
     width: 280px;
     gap: 5px;
     border: 1px solid #2E2F3A;
+    margin: auto;
 }
 
 .sender-area .send {

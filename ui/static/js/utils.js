@@ -1,6 +1,19 @@
-let socket
+let socket, tabMess
 export let connectedPerson = []
 export let notificatedPerson = []
+
+export const tabMessManager = {
+    get() {
+        return tabMess
+    },
+    set(value) {
+        tabMess = value
+    },
+    add(value) {
+        let lastId = parseInt(tabMess[tabMess.length - 1][0])
+        tabMess.push([lastId + 1, value])
+    }
+}
 
 export const socketManager = {
     get() {
@@ -8,14 +21,16 @@ export const socketManager = {
     },
     set(url) {
         socket = new WebSocket(url)
+
         socket.addEventListener('open', () => {
             console.log('connexion chat ouverte')
         })
+
         socket.addEventListener('message', (e) => {
             console.log("Message entrant : ", e.data)
-            const msgArea = document.querySelector('#chatBox .container .messages-area')
             let trace = e.data.split('\n')
             let ids = trace[trace.length - 1].split('-')
+            const msgArea = document.querySelector('#chatBox .container .messages-area')
 
             // Decryptage de la reponse du server voir si c'est la first connection
             if (/##(.*?)##/g.test(e.data)) {
@@ -25,26 +40,32 @@ export const socketManager = {
                     connectedPerson = serie.split('-').map(Number)
                     console.log("Connected Pers : ", connectedPerson);
                 }
+
             } else if (/==(.*?)==/g.test(e.data)) { // Decryptage de la reponse du server voir le typing progr.
                 let text = e.data
                 let serie = text.match(/==(.*?)==/)[1]
                 console.log(serie)
                 if (msgArea != null) {
                     if (msgArea.querySelector('.list-user') == null) {
-                        if (serie == "typing") {
-                            msgArea.innerHTML += `<div class="message-content r lasta" style="background:#828E9E">
-                            <div class="loading-wave">
-                                <div class="loading-bar"></div>
-                                <div class="loading-bar"></div>
-                                <div class="loading-bar"></div>
-                                <div class="loading-bar"></div>
-                            </div>
-                          </div>`
-                            msgArea.scrollTo(0, msgArea.scrollHeight)
-
-                        } else if (serie == "stop") {
-                            // msgArea.lastChild.remove()
-                            msgArea.querySelector('.lasta').remove()
+                        let trueId = document.querySelector('#ownerId').textContent
+                        let you = document.querySelector('#chatBox .nav-bar > a').textContent
+                        if (ids[0] == parseInt(trueId)) {
+                            if (serie == "typing") {
+                                msgArea.innerHTML += `<div class="message-content r lasta" style="background:#828E9E">
+                                <span>${you}<span>
+                                <div class="loading-wave">
+                                    <div class="loading-bar"></div>
+                                    <div class="loading-bar"></div>
+                                    <div class="loading-bar"></div>
+                                    <div class="loading-bar"></div>
+                                </div>
+                              </div>`
+                                msgArea.scrollTo(0, msgArea.scrollHeight)
+    
+                            } else if (serie == "stop") {
+                                // msgArea.lastChild.remove()
+                                msgArea.querySelector('.lasta').remove()
+                            }
                         }
 
                     } else {
@@ -55,13 +76,14 @@ export const socketManager = {
                             const subdiv = document.createElement('p')
                             subdiv.textContent = 'écrit...'
                             div.appendChild(subdiv)
-                            span.style.visibility='hidden'
+                            span.style.visibility = 'hidden'
                         } else if (serie == "stop") {
                             div.querySelector('p').remove()
                             span.style.visibility = 'visible'
                         }
                     }
                 }
+
             } else {
                 if (msgArea == null) {
                     const counterMsg = document.querySelector('#messageBtn .msg-count')
@@ -70,8 +92,13 @@ export const socketManager = {
                     console.log("notifPers", notificatedPerson)
                 } else if (msgArea.querySelector('.list-user') == null) {
                     let you = document.querySelector('#chatBox .nav-bar > a').textContent
-                    msgArea.innerHTML += `<div class="message-content r"><span>${you}</span><p>${trace[0]}</p><span>${new Date().toISOString()}</span></div>`
-                    msgArea.scrollTo(0, msgArea.scrollHeight)
+                    let trueId = document.querySelector('#ownerId').textContent
+                    if (parseInt(trueId) == ids[0]) {
+                        let divMsg = `<div class="message-content r"><span>${you}</span><p>${trace[0]}</p><span>${new Date().toISOString()}</span></div>`
+                        msgArea.innerHTML += divMsg
+                        tabMessManager.add(divMsg)
+                        msgArea.scrollTo(0, msgArea.scrollHeight)
+                    }
                 } else if (msgArea.querySelector('.list-user') != null) {
                     const div = msgArea.querySelector(`div[data-id='${ids[1]}'] span`)
                     div.className = 'o'
@@ -100,7 +127,7 @@ export function updateURL(pageName) {
 }
 
 // En cas de reactualisation du navigateur
-window.addEventListener('beforeunload', async (e)=>{
+window.addEventListener('beforeunload', async (e) => {
     e.preventDefault()
     await fetches('logout')
 })

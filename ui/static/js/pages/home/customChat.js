@@ -1,4 +1,4 @@
-import { connectedPerson, fetches, fetchesPost, notificatedPerson, socketManager } from "../../utils.js"
+import { connectedPerson, fetches, fetchesPost, notificatedPerson, socketManager, tabMessManager } from "../../utils.js"
 
 export class customChat extends HTMLElement {
     /* constructor() {
@@ -86,12 +86,9 @@ export class customChat extends HTMLElement {
     #makeEventListener() {
         const closeBtn = this.querySelector('.close')
         const senderArea = this.querySelector('.sender-area')
-        let idIntervalScroll, idTimeoutScroll
+        let idTimeoutScroll
         closeBtn.addEventListener('click', () => {
             this.remove()
-            if (idIntervalScroll) {
-                clearInterval(idIntervalScroll)
-            }
             if (idTimeoutScroll) {
                 clearTimeout(idTimeoutScroll)
             }
@@ -122,41 +119,44 @@ export class customChat extends HTMLElement {
                     if (data.Conversation !== null) {
                         let you = v.textContent
                         let me = document.querySelector('#ownerUsername').textContent
-                        let tabMess = data.Conversation.map((msg) => {
+                        let tabMsg = data.Conversation.map((msg) => {
                             console.log("msg.Receiver_id : ", msg.Receiver_id, "msg.Sender_id : ", msg.Sender_id)
                             if (msg.Receiver_id == receiverId) {
                                 return [msg.Message_id, `<div class="message-content s"><span>${me}</span><p>${msg.Content}</p><span>${msg.Date_Creation}</span></div>`]
                             }
                             return [msg.Message_id, `<div class="message-content r"><span>${you}</span><p>${msg.Content}</p><span>${msg.Date_Creation}</span></div>`]
                         })
-
                         // Tri du tableau de message selon l'id des messages
-                        tabMess.sort((a, b) => a[0] - b[0]);
+                        tabMsg.sort((a, b) => a[0] - b[0]);
+                        tabMessManager.set(tabMsg)
 
-                        // let partFactor = 1
-                        // let latest = tabMess.slice(-10 * partFactor, tabMess.length)
+                        let partFactor = 1
+                        let latest = tabMessManager.get().slice(-10 * partFactor, tabMessManager.get().length)
 
                         // Affichage des messages contenus dans le tableau latest
-                        msgArea.innerHTML = `${tabMess.map((msg) => {
+                        msgArea.innerHTML = `${latest.map((msg) => {
                             return msg[1]
                         }).join('')}`
                         msgArea.scrollTo(0, msgArea.scrollHeight)
 
-                        // Bout de code permettant de traiter le scroll
-                        /* idIntervalScroll = setInterval(() => {
-                            if (msgArea.scrollTop == 0 && msgArea.scrollHeight >= msgArea.clientHeight + 10) {
-                                partFactor += 1
-                                let firstPos = msgArea.scrollHeight
-                                latest = tabMess.slice(-10 * partFactor, tabMess.length)
-                                // Affichage des messages contenus dans le tableau
-                                msgArea.innerHTML = `${latest.map((msg) => {
-                                    return msg[1]
-                                }).join('')}`
-                                let finalPos = msgArea.scrollHeight - firstPos
-                                msgArea.scrollTo(0, finalPos)
+                        let started = false
+                        msgArea.addEventListener('scroll', () => {
+                            if (msgArea.scrollTop == 0 && msgArea.scrollHeight >= msgArea.clientHeight + 10 && started == false) {
+                                started = true
+                                idTimeoutScroll = setTimeout(() => {
+                                    partFactor += 1
+                                    let firstPos = msgArea.scrollHeight
+                                    latest = tabMessManager.get().slice(-10 * partFactor, tabMessManager.get().length)
+                                    // Affichage des messages contenus dans le tableau
+                                    msgArea.innerHTML = `${latest.map((msg) => {
+                                        return msg[1]
+                                    }).join('')}`
+                                    let finalPos = msgArea.scrollHeight - firstPos
+                                    msgArea.scrollTo(0, finalPos)
+                                    started = false
+                                }, 1000)
                             }
-                        }, 1000) */
-
+                        })
                     } else {
                         msgArea.innerHTML = ``
                     }
@@ -173,12 +173,12 @@ export class customChat extends HTMLElement {
         const sendInput = this.querySelector('.send-input');
         senderIcone.addEventListener('click', async () => {
             if (sendInput.value !== "") {
-                let you = this.querySelector('#chatBox .nav-bar > a')
                 let me = document.querySelector('#ownerUsername').textContent
                 try {
                     socketManager.get().send(sendInput.value + "\n" + senderArea.dataset.id)
-                    msgArea.innerHTML += `<div class="message-content s"><span>${me}</span><p>${sendInput.value}</p><span>${new Date().toISOString()}</span></div>`
-
+                    let divMsg = `<div class="message-content s"><span>${me}</span><p>${sendInput.value}</p><span>${new Date().toISOString()}</span></div>`
+                    msgArea.innerHTML += divMsg
+                    tabMessManager.add(divMsg)
                     sendInput.value = ''
                     msgArea.scrollTo(0, msgArea.scrollHeight)
                 } catch (error) {
@@ -187,11 +187,12 @@ export class customChat extends HTMLElement {
             }
         });
 
-        let lastTime = Date.now()
         let exe = false
-        let stopTimeOut
+        let stopTimeOut, lastTime
         sendInput.addEventListener('keydown', () => {
             if (!exe) {
+                lastTime = Date.now()
+
                 socketManager.get().send("==typing==" + "\n" + senderArea.dataset.id)
                 exe = true
             }

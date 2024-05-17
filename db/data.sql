@@ -127,16 +127,45 @@ VALUES (1, 1, true, false),
     (4, 4, true, false),
     (5, 4, true, false);
 -- Insertion de données fictives dans la table Messages
-
 INSERT INTO Messages (content, creation_date, sender_id, receiver_id)
-VALUES 
-    ('Salut, comment ça va ?', '2024-05-07 10:00:00', 7, 1),
-    ('Ça va bien, merci !', '2024-05-07 10:01:00', 1, 7),
-    ('Hello !', '2024-05-07 10:02:00', 3, 4),
-    ('Hi, how are you?', '2024-05-07 10:03:00', 4, 3),
-    ('Je suis content de te voir !', '2024-05-07 10:04:00', 7, 1),
-    ('Moi aussi !', '2024-05-07 10:05:00', 1, 7),
-    ('What are you doing?', '2024-05-07 10:06:00', 3, 4),
-    ('I am working on a project.', '2024-05-07 10:07:00', 4, 3),
-    ('L informatiq, cest très passionnant !', '2024-05-07 10:07:00', 1, 7),
-    ('Ça semble intéressant !', '2024-05-07 10:08:00', 7, 1);
+VALUES
+
+    -- 2024-05-07 10:09:00
+    ('En effet, j apprends beaucoup de choses nouvelles.', '2024-05-07 10:09:00', 4, 3),
+    ('C est génial !', '2024-05-07 10:10:00', 7, 1),
+    ('Et toi, que fais-tu ?', '2024-05-07 10:11:00', 1, 7),
+    ('Je suis développeur web.', '2024-05-07 10:12:00', 3, 4),
+    ('Ah, c est intéressant !', '2024-05-07 10:13:00', 7, 1),
+    ('J adore créer des sites web et des applications.', '2024-05-07 10:14:00', 3, 4),
+    ('Moi aussi ! C est très gratifiant de voir ses créations prendre vie.', '2024-05-07 10:15:00', 1, 7),
+    ('Tout à fait !', '2024-05-07 10:16:00', 3, 4),
+
+    -- 2024-05-07 10:17:00
+    ('Et quels sont tes projets en cours ?', '2024-05-07 10:17:00', 7, 1),
+    ('En ce moment, je développe une application mobile pour gérer les tâches.', '2024-05-07 10:18:00', 3, 4),
+    ('Cela semble très utile !', '2024-05-07 10:19:00', 1, 7),
+    ('Oui, l objectif est d aider les gens à rester organisés et productifs.', '2024-05-07 10:20:00', 3, 4),
+    ('C est une excellente idée ! Je suis sûr que beaucoup de gens l apprécieront.', '2024-05-07 10:21:00', 1, 7),
+    ('J espère !', '2024-05-07 10:22:00', 7, 1),
+
+    -- 2024-05-07 10:23:00
+    ('As-tu déjà rencontré des difficultés pendant le développement ?', '2024-05-07 10:23:00', 7, 1),
+    ('Bien sûr, comme dans tout projet de développement. Mais j aime les défis et cela me permet d apprendre de nouvelles choses.', '2024-05-07 10:24:00', 1, 7),
+    ('C est vrai, les défis nous font grandir.', '2024-05-07 10:25:00', 1, 7),
+    ('Exactement ! Et puis, c est toujours satisfaisant de surmonter les obstacles.', '2024-05-07 10:26:00', 3, 4),
+    ('Tout à fait !', '2024-05-07 10:27:00', 1, 7),
+
+    -- 2024-05-07 10:28:00
+    ('Penses-tu partager ton application une fois terminée ?', '2024-05-07 10:28:00', 7, 1),
+    ('Oui, j envisage de la publier sur les stores d applications pour que tout le monde puisse en profiter.', '2024-05-07 10:29:00', 3, 4),
+    ('C est une excellente idée ! Je suis sûr qu elle aura beaucoup de succès.', '2024-05-07 10:30:00', 1, 7),
+    ('Merci beaucoup ! J espère bien. J ai hâte de la partager avec le monde.', '2024-05-07 10:31:00', 7, 1),
+    ('N hésite pas à me demander si tu as besoin d aide pour le développement ou la promotion de ton application.', '2024-05-07 10:32:00', 1, 7),
+    ('C est très gentil de ta part, merci ! Je te tiendrai au courant de l avancement du projet.', '2024-05-07 10:33:00', 7, 1),
+    ('En tout cas, je suis très impressionné par ton travail. Tu es un développeur très talentueux.', '2024-05-07 10:34:00', 1, 7),
+    ('Merci beaucoup pour ton compliment ! J apprends toujours de nouvelles choses et je suis toujours à la recherche de moyens de m améliorer.', '2024-05-07 10:35:00', 7, 1),
+    ('C est la bonne attitude à avoir ! C est comme ça qu on progresse et qu on réalise de grandes choses.', '2024-05-07 10:36:00', 3, 4),
+    ('Tout à fait d accord ! Et puis, c est toujours plus motivant quand on est passionné par ce qu on fait.', '2024-05-07 10:37:00', 7, 1),
+    ('Je suis d accord avec vous deux. La passion est le moteur du succès.', '2024-05-07 10:38:00', 1, 7),
+    ('En effet ! Et il est important de s amuser en cours de route.', '2024-05-07 10:39:00', 7, 1),
+    ('C est vrai ! Le développement peut parfois être ardu, mais il faut aussi savoir en profiter.', '2024-05-07 10:40:00', 1, 7);
