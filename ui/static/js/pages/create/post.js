@@ -84,6 +84,7 @@ export class PostForm extends HTMLElement {
                     </main>
                     <custom-section></custom-section>`
                     this.remove()
+                    body.style.overflow= 'scroll'
                 } else {
                     this.querySelector('.Error').textContent = "Veiller entrer de bonnes valeurs aux champs du formulaire"
                 }

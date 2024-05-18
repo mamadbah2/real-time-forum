@@ -9,7 +9,7 @@ export class CommentForm extends HTMLElement {
     constructComment() {
         this.innerHTML = `
             <form action="" method="post" id="form-comment">
-                <textarea name="comment" rows="1" placeholder="Ajouter un commentaire"></textarea>
+                <textarea name="comment" rows="3" placeholder="Ajouter un commentaire"></textarea>
                 <button name="send-comment" type="submit">
                     <i class="fa-regular fa-paper-plane"></i>
                 </button>

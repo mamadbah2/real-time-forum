@@ -1,5 +1,6 @@
 import { connectedPerson, fetches, fetchesPost, notificatedPerson, socketManager, tabMessManager } from "../../utils.js"
 
+
 export class customChat extends HTMLElement {
     /* constructor() {
         super()
@@ -121,7 +122,7 @@ export class customChat extends HTMLElement {
 
                 // We remove the notification
                 console.log("notif avant : ", notificatedPerson)
-                
+
                 for (let i = 0; i < notificatedPerson.length; i++) {
                     const idPers = notificatedPerson[i];
                     if (idPers == receiverId) {

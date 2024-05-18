@@ -1,20 +1,24 @@
 package models
 
 import (
+	"database/sql"
+	"log"
 	"strings"
+	"time"
 )
 
 type User struct {
-	User_id        int
-	Username       string
-	age            int
-	Gender         string
-	Firstname      string
-	Lastname       string
-	Email          string
-	Password       string
-	LikeCounter    int
-	CommentCounter int
+	User_id         int
+	Username        string
+	age             int
+	Gender          string
+	Firstname       string
+	Lastname        string
+	Email           string
+	Password        string
+	LastMessageDate time.Time
+	LikeCounter     int
+	CommentCounter  int
 }
 
 func (m *ConnDB) GetUser(id int) (*User, error) {
@@ -81,20 +85,57 @@ func (m *ConnDB) GetAllUserSortedByLastSent(actualUser int) ([]*User, error) {
 	}
 
 	// Recuperation par dernier envoyeur
-	statement = `SELECT DISTINCT m.receiver_id, u.username FROM Messages m INNER JOIN User u ON m.receiver_id = u.user_id WHERE m.sender_id = ? ORDER BY m.creation_date DESC`
-	rows, err = m.DB.Query(statement, actualUser)
+	// statement = `SELECT DISTINCT m.receiver_id, u.username FROM Messages m INNER JOIN User u ON m.receiver_id = u.user_id WHERE m.sender_id = ? ORDER BY m.creation_date DESC`
+	statement = `
+		WITH RelevantMessages AS (
+			SELECT 
+				sender_id AS user_id, 
+				creation_date 
+			FROM messages 
+			WHERE receiver_id = ?
+		
+			UNION
+		
+			SELECT 
+				receiver_id AS user_id, 
+				creation_date 
+			FROM messages 
+			WHERE sender_id = ?
+		)
+		
+		SELECT 
+			u.user_id, 
+			u.username, 
+			MAX(rm.creation_date) AS last_message_date
+		FROM User u
+		JOIN RelevantMessages rm ON u.user_id = rm.user_id
+		WHERE u.user_id <> ?
+		GROUP BY u.user_id, u.username
+		ORDER BY last_message_date DESC;
+	`
+
+	rows, err = m.DB.Query(statement, actualUser, actualUser, actualUser)
 	if err != nil {
-		return nil, err
+		log.Fatal(err)
 	}
 	defer rows.Close()
+
 	var usersMsg []*User
 	for rows.Next() {
-		u := &User{}
-		err = rows.Scan(&u.User_id, &u.Username)
-		if err != nil {
-			return nil, err
+		user := &User{}
+		// var lastMessageDate sql.NullTime
+		var lastMessageDate sql.NullString
+		if err := rows.Scan(&user.User_id, &user.Username, &lastMessageDate); err != nil {
+			log.Fatal(err)
 		}
-		usersMsg = append(usersMsg, u)
+
+		// if lastMessageDate.Valid {
+		// 	user.LastMessageDate = lastMessageDate.Time
+		// } else {
+		// 	user.LastMessageDate = time.Time{}
+		// }
+
+		usersMsg = append(usersMsg, user)
 	}
 
 	var sortedTable []*User

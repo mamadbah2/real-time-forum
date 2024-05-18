@@ -110,8 +110,18 @@ export const socketManager = {
                     }
                 } else if (msgArea.querySelector('.list-user') != null) {
                     notificatedPerson.push(parseInt(ids[1]))
-                    const div = msgArea.querySelector(`div[data-id='${ids[1]}'] span`)
-                    div.className = 'o'
+                    const div = msgArea.querySelector(`div[data-id='${ids[1]}']`)
+                    
+                    const cloneDiv = document.createElement(`div`)
+                    cloneDiv.innerHTML = div.innerHTML
+                    cloneDiv.dataset.id = `${ids[1]}`
+                    cloneDiv.className='list-user'
+                    msgArea.insertBefore(cloneDiv, msgArea.firstChild)
+                    div.remove()
+                    setTimeout(() => {
+                        const span = msgArea.querySelector(`div[data-id='${ids[1]}'] span`)
+                        span.className ='o'
+                    }, 400);
                 }
             }
 
