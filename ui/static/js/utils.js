@@ -18,6 +18,7 @@ export const tabMessManager = {
     }
 }
 
+
 export const socketManager = {
     get() {
         return socket
@@ -42,6 +43,7 @@ export const socketManager = {
                 if (/^(\d+)(?:-\d+)*$/g.test(serie)) {
                     connectedPerson = serie.split('-').map(Number)
                     console.log("Connected Pers : ", connectedPerson);
+
                 }
 
             } else if (/==(.*?)==/g.test(e.data)) { // Decryptage de la reponse du server voir le typing progr.
@@ -50,9 +52,10 @@ export const socketManager = {
                 console.log(serie)
                 if (msgArea != null) {
                     if (msgArea.querySelector('.list-user') == null) {
-                        let trueId = document.querySelector('#ownerId').textContent
-                        let you = document.querySelector('#chatBox .nav-bar > a').textContent
-                        if (ids[0] == parseInt(trueId)) {
+                        const navNode = document.querySelector('#chatBox .nav-bar a');
+                        let trueId = navNode.dataset.id
+                        let you = navNode.textContent
+                        if (ids[1] == parseInt(trueId)) {
                             if (serie == "typing") {
                                 msgArea.innerHTML += `<div class="message-content r lasta" style="background:#828E9E">
                                 <span>${you}<span>
@@ -94,15 +97,19 @@ export const socketManager = {
                     notificatedPerson.push(ids[1])
                     console.log("notifPers", notificatedPerson)
                 } else if (msgArea.querySelector('.list-user') == null) {
-                    let you = document.querySelector('#chatBox .nav-bar > a').textContent
-                    let trueId = document.querySelector('#ownerId').textContent
-                    if (parseInt(trueId) == ids[0]) {
+                    const navNode = document.querySelector('#chatBox .nav-bar a')
+                    let trueId = navNode.dataset.id
+                    let you = navNode.textContent
+                    if (parseInt(trueId) == ids[1]) {
                         let divMsg = `<div class="message-content r"><span>${you}</span><p>${trace[0]}</p><span>${new Date().toISOString()}</span></div>`
                         msgArea.innerHTML += divMsg
                         tabMessManager.add(divMsg)
                         msgArea.scrollTo(0, msgArea.scrollHeight)
+                    } else {
+                        notificatedPerson.push(parseInt(ids[1]))
                     }
                 } else if (msgArea.querySelector('.list-user') != null) {
+                    notificatedPerson.push(parseInt(ids[1]))
                     const div = msgArea.querySelector(`div[data-id='${ids[1]}'] span`)
                     div.className = 'o'
                 }
@@ -130,10 +137,10 @@ export function updateURL(pageName) {
 }
 
 // En cas de reactualisation du navigateur
-window.addEventListener('beforeunload', async (e) => {
+/* window.addEventListener('beforeunload', async (e) => {
     e.preventDefault()
     await fetches('logout')
-})
+}) */
 
 export async function fetches(page) {
     const response = await fetch(`http://localhost:4000/${page}`, { method: "GET" })
@@ -182,4 +189,24 @@ export function invokeTag(name, event) {
     body.appendChild(document.createElement(name))
     body.querySelector('#website').innerHTML = ''
     event.preventDefault()
+}
+
+export async function start() {
+    fetches('home').then((data) => {
+        if (data.Disconnected) {
+            document.querySelector('body').innerHTML = `<div id="website"></div>
+        <custom-login></custom-login>`;
+            disconnectedManager.setState(true)
+        } else {
+            socketManager.set('ws://localhost:4000/chat')
+            disconnectedManager.setState(false)
+            document.querySelector('body').innerHTML = `<div id="website">
+            <custom-header></custom-header>
+            <main>
+                <custom-home></custom-home>
+            </main>
+            <custom-section></custom-section>
+        </div>`
+        }
+    })
 }

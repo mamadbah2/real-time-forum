@@ -1,4 +1,4 @@
-import { disconnectedManager, fetches, invokeTag } from "../../utils.js";
+import { connectedPerson, disconnectedManager, fetches, invokeTag } from "../../utils.js";
 
 export class customHeader extends HTMLElement {
 
@@ -20,7 +20,7 @@ export class customHeader extends HTMLElement {
 
                 <nav>
                     <span id="postcreate">
-                        <a>Ajouter un post</a>
+                        <a>POST  <i class="fa-solid fa-arrow-up-from-bracket"></i></a>
                     </span>
                     <span id="logout">
                         <a style="color:white">Logout</a>
@@ -44,10 +44,13 @@ export class customHeader extends HTMLElement {
             logout.innerHTML = `<a style="color:white" href="">Login</a>`;
         } else {
             online.innerHTML = `
-            <h4 id="ownerUsername">${data.UserInfo.Username} </h4>
-            <p>${data.UserInfo.Email} </p>
-            <p><strong>Status </strong> <span class="connected">Connected</span></p>
+            <h4>${data.UserInfo.Email} </h4>
+            <p><strong>Username </strong> <span class="connected">${data.UserInfo.Username}</span></p>
+            <p><strong>Gender </strong> <span class="connected">${data.UserInfo.Gender}</span></p>
+            <p><strong>Lastname </strong> <span class="connected">${data.UserInfo.Firstname}</span></p>
+            <p><strong>Firstname </strong> <span class="connected">${data.UserInfo.Lastname}</span></p>
             <p id="ownerId" style="display:none">${data.UserInfo.User_id} </p>
+            <p id="ownerUsername" style="display:none">${data.UserInfo.Username} </p>
             `;
         }
 
@@ -60,6 +63,13 @@ export class customHeader extends HTMLElement {
                 fetches('logout').then((data) => {
                     if (!data.BadRequestForm) {
                         disconnectedManager.setState(true)
+                    }
+                    document.cookie == "session_token:deleted"
+                    let ownerId = document.querySelector('#ownerId').textContent
+                    for (let i = 0; i < array.length; i++) {
+                        if (connectedPerson[i] == parseInt(ownerId) ) {
+                            connectedPerson.splice(i, 1)
+                        } 
                     }
                 })
             }

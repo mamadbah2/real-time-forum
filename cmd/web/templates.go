@@ -105,16 +105,6 @@ func (app *application) renderJSON(w http.ResponseWriter, r *http.Request, data 
 			app.serverError(w, r, err)
 			return
 		}
-		userInfo.LikeCounter, err = app.connDB.GetLikeNumberByUser(userId)
-		if err != nil {
-			app.serverError(w, r, err)
-			return
-		}
-		userInfo.CommentCounter, err = app.connDB.GetCommentNumberByUser(userId)
-		if err != nil {
-			app.serverError(w, r, err)
-			return
-		}
 
 		data.UserInfo = userInfo
 	}

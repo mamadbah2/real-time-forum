@@ -1,4 +1,4 @@
-import { fetchesPost, socketManager, updateURL } from "../../utils.js"
+import { fetchesPost, socketManager } from "../../utils.js"
 
 export class customLogin extends HTMLElement {
     connectedCallback() {
@@ -33,16 +33,6 @@ export class customLogin extends HTMLElement {
             this.remove()
         })
 
-        // Lorsqu'on clique sur Forum01 on revient à la page d'accueil
-        /* this.querySelector('.title em').addEventListener('click', () => {
-            document.querySelector('#website').innerHTML = `<custom-header></custom-header>
-            <main>
-                <custom-home></custom-home>
-            </main>
-            <custom-section></custom-section>`
-            this.remove()
-        }) */
-
         // Lorsqu'on soumet le formulaire 
         this.querySelector('.form').addEventListener('submit', async (e) => {
             e.preventDefault()
@@ -55,7 +45,7 @@ export class customLogin extends HTMLElement {
                         </main>
                         <custom-section></custom-section>`
                 this.remove()
-                socketManager.set('ws://localhost:4000/chat')
+                socketManager.set(`ws://localhost:4000/chat`)
 
             } else {
                 const errNode = document.createElement('h5')

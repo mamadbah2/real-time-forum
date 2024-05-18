@@ -14,7 +14,9 @@ export class CommentSection extends HTMLElement {
 
     constructCommentSection() {
         this.innerHTML = `
-            <custom-detail></custom-detail>
+            <custom-detail>
+            
+            </custom-detail>
             <custom-comment-form></custom-comment-form>
         `
     }

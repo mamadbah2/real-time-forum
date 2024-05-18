@@ -19,7 +19,7 @@ export class customChat extends HTMLElement {
     
                 <!-- Fais office de croix -->
                 <div class="close">
-                    <i class="fa-solid fa-xmark"></i>
+                <i class="fa-solid fa-arrow-right"></i>
                 </div>
             </div>
             <div class="messages-area">
@@ -52,26 +52,15 @@ export class customChat extends HTMLElement {
 
     async userInformation() {
         const msgArea = this.querySelector('.messages-area')
-        console.log(connectedPerson)
-        // Here We check our connection by showing the length of connectedPerson table
-        if (connectedPerson.length == 0) {
-            document.querySelector('#chatBox .nav-bar a').innerHTML = `<span style="color: red;">Connection failed</span>`
-        }
+
 
         fetches('home').then((data) => {
             msgArea.innerHTML = data.UserList.map((u) => {
                 for (let i = 0; i < notificatedPerson.length; i++) {
                     if (notificatedPerson[i] == u.User_id) {
-                        notificatedPerson.splice(i, 1)
+                        // notificatedPerson.splice(i, 1)
                         return `
                         <div class="list-user" data-id="${u.User_id}">${u.Username} <span class="o"></span></div>
-                        `
-                    }
-                }
-                for (let i = 0; i < connectedPerson.length; i++) {
-                    if (connectedPerson[i] == u.User_id) {
-                        return `
-                        <div class="list-user" data-id="${u.User_id}">${u.Username} <span></span></div>
                         `
                     }
                 }
@@ -86,19 +75,44 @@ export class customChat extends HTMLElement {
     #makeEventListener() {
         const closeBtn = this.querySelector('.close')
         const senderArea = this.querySelector('.sender-area')
+        const sectionNode = document.querySelector('custom-section')
+        const msgArea = this.querySelector('.messages-area')
+        const listPostNode = document.querySelector('custom-posts #list-post')
+
         let idTimeoutScroll
         closeBtn.addEventListener('click', () => {
-            this.remove()
             if (idTimeoutScroll) {
                 clearTimeout(idTimeoutScroll)
             }
+            this.remove()
+            const parentDiv = document.querySelector('custom-section')
+            const childNode = document.createElement('custom-chat')
+            this.classList.remove('chatMsg')
+            if (listPostNode && window.innerWidth >= 1250) {
+                listPostNode.style.gridTemplateColumns = '1fr 1fr'
+            } 
+            sectionNode.style.width = '200px'
+            parentDiv.insertBefore(childNode, parentDiv.firstChild)
         })
+
+        setTimeout(()=>{
+            msgArea.querySelectorAll('.list-user').forEach((uDiv) => {
+                for (let i = 0; i < connectedPerson.length; i++) {
+                    if (connectedPerson[i] == parseInt(uDiv.dataset.id)) {
+                        if (!uDiv.querySelector('span')) uDiv.appendChild(document.createElement('span'))
+                    }
+                }
+            })
+        }, 500)
 
         // conversation
         const listUser = this.querySelectorAll('.list-user')
-        const msgArea = this.querySelector('.messages-area')
         listUser.forEach(v => {
             v.addEventListener('click', async () => {
+                // Un peu de mise en forme s'impose
+                sectionNode.style.cssText += 'width: 340px; transition: 200ms linear;'
+                this.classList.add('chatMsg')
+                if (listPostNode) listPostNode.style.gridTemplateColumns = '1fr'
 
                 // We take de receiver Id
                 let receiverId = v.dataset.id
@@ -106,8 +120,19 @@ export class customChat extends HTMLElement {
                 senderArea.dataset.id = receiverId
 
                 // We remove the notification
-                const notifSpan = v.querySelector('.o')
-                if (notifSpan) notifSpan.classList.remove('o')
+                console.log("notif avant : ", notificatedPerson)
+                
+                for (let i = 0; i < notificatedPerson.length; i++) {
+                    const idPers = notificatedPerson[i];
+                    if (idPers == receiverId) {
+                        notificatedPerson.splice(i,1)  
+                        i--
+                    }
+                }
+                console.log("notif apres : ", notificatedPerson)
+
+                /* const notifSpan = v.querySelector('.o')
+                if (notifSpan) notifSpan.classList.remove('o') */
 
                 try {
                     // We take the value of form
@@ -160,7 +185,9 @@ export class customChat extends HTMLElement {
                     } else {
                         msgArea.innerHTML = ``
                     }
-                    document.querySelector('#chatBox .nav-bar a').textContent = `${v.textContent}`
+                    const navNode = document.querySelector('#chatBox .nav-bar a')
+                    navNode.textContent = `${v.textContent}`
+                    navNode.dataset.id = v.dataset.id
                 } catch (error) {
                     console.error('Erreur : ', error)
                 }

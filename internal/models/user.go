@@ -8,9 +8,9 @@ type User struct {
 	User_id        int
 	Username       string
 	age            int
-	gender         string
-	firstname      string
-	lastname       string
+	Gender         string
+	Firstname      string
+	Lastname       string
 	Email          string
 	Password       string
 	LikeCounter    int
@@ -21,7 +21,7 @@ func (m *ConnDB) GetUser(id int) (*User, error) {
 	statement := `SELECT * FROM User WHERE user_id = ?`
 	row := m.DB.QueryRow(statement, id)
 	user := &User{}
-	err := row.Scan(&user.User_id, &user.Username, &user.age, &user.gender, &user.firstname, &user.lastname, &user.Email, &user.Password)
+	err := row.Scan(&user.User_id, &user.Username, &user.age, &user.Gender, &user.Firstname, &user.Lastname, &user.Email, &user.Password)
 	if err != nil {
 		return nil, err
 	}

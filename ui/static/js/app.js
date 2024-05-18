@@ -6,6 +6,7 @@ import { customLogin } from "./pages/connexion/customLogin.js";
 import { customRegister } from "./pages/connexion/customRegister.js";
 import { CommentSection } from "./pages/comment/comment.js";
 import { customChat } from "./pages/home/customChat.js";
+import { start } from "./utils.js";
 
 customElements.define('custom-header', customHeader)
 customElements.define('custom-home', HomeSection)
@@ -17,3 +18,4 @@ customElements.define('custom-chat', customChat)
 // customElements.define('post-list', PostList);
 customElements.define('post-form', PostForm);
 
+await start();

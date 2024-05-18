@@ -6,19 +6,18 @@ VALUES
     ('charliebrown', 28, 'Male', 'Charlie', 'Brown', 'charlie.brown@example.com', 'P@ssw0rd'),
     ('davidmiller', 35, 'Male', 'David', 'Miller', 'david.miller@example.com', 'Secure789'),
     ('emmawhite', 22, 'Female', 'Emma', 'White', 'emma.white@example.com', 'Confidential987'),
-    ('bobodenar', 45, 'Other', 'Bobo', 'DeNar', 'bahs@gmail.com', '$2a$12$Sa.9gDTECdrMfKK/rWYaHuUJZtzgnmiwk9i7mroAzUyscgsDDo4Zy');
+    ('bobodenar', 45, 'Other', 'Mamadou', 'BAH', 'bahs@gmail.com', '$2a$12$Sa.9gDTECdrMfKK/rWYaHuUJZtzgnmiwk9i7mroAzUyscgsDDo4Zy');
 -- Insertion de données fictives dans la table Category
 INSERT INTO Category (name)
-VALUES ('Religion'),
-    ('Technologie'),
-    ('Voyages'),
-    ('Cuisine'),
+VALUES ('Action'),
+    ('Romance'),
     ('Sport'),
-    ('Mode');
+    ('Enigmatique'),
+    ('Autre');
 -- Insertion de données fictives dans la table Post
 INSERT INTO Post (content, image_name, creation_date, `user_id`)
 VALUES (
-        'Nouvelle découverte technologique !  
+        'Nouvelle découverte sur les mangas !  
         Lorem ipsum dolor sit, amet consectetur adipisicing. 
         Lorem ipsum dolor, sit amet consectetur adipisicing elit.
          Unde quo dignissimos eaque error delectus quidem incidunt sunt 
@@ -29,25 +28,26 @@ VALUES (
         1
     ),
     (
-        'Mes vacances à la plage de la Guinee',
+        'Il y en a eu des hommes forts et gojo en est un. Encore
+        faut il le voir combattre',
         'gojo.jpg',
         '2022-02-11 01:56:00',
         2
     ),
     (
-        'Recette secrète de grand-mère vraiment secrete hein',
+        'Dragon ball a fait mon enfance. Pas vous',
         'goku.jpg',
         '2022-02-12 21:23:47',
         3
     ),
     (
-        'Entraînement intensif maintenant',
+        'Le demon renard. Ca envoie du lourd !!',
         'narutoEres.jpeg',
         '2022-02-13 07:26:12',
         4
     ),
     (
-        'Tendances de la mode automne 2022',
+        'Les gars la saison 4, vous en pensez quoi 💖',
         'tanjiro.jpeg',
         '2022-02-14 20:01:30',
         5

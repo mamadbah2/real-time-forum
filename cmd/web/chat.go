@@ -11,6 +11,6 @@ var Clients []Client
 
 // INITIALISATION
 var Upgradero = websocket.Upgrader{
-	ReadBufferSize:  1024,
-	WriteBufferSize: 1024,
+	ReadBufferSize:  2024,
+	WriteBufferSize: 2024,
 }

@@ -501,7 +501,8 @@ func (app *application) login(w http.ResponseWriter, r *http.Request) {
 			Value:    u.String(),
 			Secure:   true,
 			Expires:  time.Now().Add(60 * time.Minute),
-			HttpOnly: true,
+			HttpOnly: false,
+			SameSite: http.SameSiteNoneMode,
 		}
 		app.Session[u.String()] = user.User_id
 		http.SetCookie(w, &cookies)
@@ -640,17 +641,27 @@ func (app *application) chat(w http.ResponseWriter, r *http.Request) {
 			app.serverError(w, r, err)
 			return
 		}
-
-		// ON append dans le tableau de client la connexion
+		// ON append dans le tableau de client la connexionn ou on met à jour s'il est deja la
+		for i, client := range Clients {
+			if (client.idClient == actualUser && client.Conn != conn) {
+				client.Conn = conn
+				Clients = append(Clients[:i], Clients[i+1:]...)
+				app.infoLog.Println("Le client ", client, " a ete remove")
+				break
+			}
+		}
 		Clients = append(Clients, Client{idClient: actualUser, Conn: conn})
+		
+		fmt.Println(" clients : ", Clients)
 		var connectedPers string
 		for _, client := range Clients {
 			connectedPers += strconv.Itoa(client.idClient) + "-"
 		}
+		fmt.Println("connected Pers : ", connectedPers)
 		for _, client := range Clients {
 			err := client.Conn.WriteMessage(websocket.TextMessage, []byte("##"+connectedPers[:len(connectedPers)-1]+"##"))
 			if err != nil {
-				app.serverError(w, r, err)
+				// app.serverError(w, r, err)
 				return
 			}
 		}
