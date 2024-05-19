@@ -1,4 +1,3 @@
-import { updateURL } from "../../utils.js"
 import { FilterForm } from "./FilterForm.js"
 import { ListPost } from "./ListPost.js"
 

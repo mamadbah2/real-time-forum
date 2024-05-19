@@ -33,7 +33,8 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	var disconnected bool
 	actualUser, err := app.validSession(r)
 	if err != nil {
-		disconnected = true
+		http.Redirect(w, r, "/logout", http.StatusSeeOther)
+		return
 	}
 
 	err = r.ParseForm()
@@ -278,7 +279,8 @@ func (app *application) comment(w http.ResponseWriter, r *http.Request) {
 	actualUser, err := app.validSession(r)
 	var disconnected bool
 	if err != nil {
-		disconnected = true
+		http.Redirect(w, r, "/logout", http.StatusSeeOther)
+		return
 	}
 
 	// Recuperation de l'id dans l'url
@@ -618,7 +620,7 @@ func (app *application) logout(w http.ResponseWriter, r *http.Request) {
 		delete(app.Session, cookie.Value)
 	}
 	// http.Redirect(w, r, "/login", http.StatusSeeOther)
-	app.renderJSON(w, r, &TemplateData{BadRequestForm: false})
+	app.renderJSON(w, r, &TemplateData{BadRequestForm: false, Disconnected: true})
 }
 
 func (app *application) chat(w http.ResponseWriter, r *http.Request) {
@@ -627,6 +629,8 @@ func (app *application) chat(w http.ResponseWriter, r *http.Request) {
 	var disconnected bool
 	if err != nil {
 		disconnected = true
+		http.Redirect(w, r, "/logout", http.StatusSeeOther)
+		return
 	}
 
 	switch r.Method {
@@ -643,7 +647,7 @@ func (app *application) chat(w http.ResponseWriter, r *http.Request) {
 		}
 		// ON append dans le tableau de client la connexionn ou on met à jour s'il est deja la
 		for i, client := range Clients {
-			if (client.idClient == actualUser && client.Conn != conn) {
+			if client.idClient == actualUser && client.Conn != conn {
 				client.Conn = conn
 				Clients = append(Clients[:i], Clients[i+1:]...)
 				app.infoLog.Println("Le client ", client, " a ete remove")
@@ -651,7 +655,7 @@ func (app *application) chat(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 		Clients = append(Clients, Client{idClient: actualUser, Conn: conn})
-		
+
 		fmt.Println(" clients : ", Clients)
 		var connectedPers string
 		for _, client := range Clients {

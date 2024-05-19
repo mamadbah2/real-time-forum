@@ -16,11 +16,11 @@ export class customChat extends HTMLElement {
         this.innerHTML = `<div id="chatBox">
         <div class="container">
             <div class="nav-bar">
-                <a>Chat</a>
+                <a>Chat <i class="fa-regular fa-message"></i></a>
     
                 <!-- Fais office de croix -->
                 <div class="close">
-                <i class="fa-solid fa-arrow-right"></i>
+                    <i class="fa-solid fa-rotate-right"></i>
                 </div>
             </div>
             <div class="messages-area">
@@ -54,20 +54,21 @@ export class customChat extends HTMLElement {
     async userInformation() {
         const msgArea = this.querySelector('.messages-area')
 
-
         fetches('home').then((data) => {
             msgArea.innerHTML = data.UserList.map((u) => {
+
                 for (let i = 0; i < notificatedPerson.length; i++) {
                     if (notificatedPerson[i] == u.User_id) {
                         // notificatedPerson.splice(i, 1)
                         return `
-                        <div class="list-user" data-id="${u.User_id}">${u.Username} <span class="o"></span></div>
-                        `
+                            <div class="list-user" data-id="${u.User_id}">${u.Username} <span class="o"></span></div>
+                            `
                     }
                 }
                 return `
-                        <div class="list-user" data-id="${u.User_id}">${u.Username} </div>
-                        `
+                    <div class="list-user" data-id="${u.User_id}">${u.Username} </div>
+                    `
+
             }).join('')
         }).then(() => { this.#makeEventListener() })
 
@@ -91,12 +92,12 @@ export class customChat extends HTMLElement {
             this.classList.remove('chatMsg')
             if (listPostNode && window.innerWidth >= 1250) {
                 listPostNode.style.gridTemplateColumns = '1fr 1fr'
-            } 
+            }
             sectionNode.style.width = '200px'
             parentDiv.insertBefore(childNode, parentDiv.firstChild)
         })
 
-        setTimeout(()=>{
+        setTimeout(() => {
             msgArea.querySelectorAll('.list-user').forEach((uDiv) => {
                 for (let i = 0; i < connectedPerson.length; i++) {
                     if (connectedPerson[i] == parseInt(uDiv.dataset.id)) {
@@ -107,92 +108,90 @@ export class customChat extends HTMLElement {
         }, 500)
 
         // conversation
+        let ownId = parseInt(document.querySelector('#ownerId').textContent)
         const listUser = this.querySelectorAll('.list-user')
         listUser.forEach(v => {
-            v.addEventListener('click', async () => {
-                // Un peu de mise en forme s'impose
-                sectionNode.style.cssText += 'width: 340px; transition: 200ms linear;'
-                this.classList.add('chatMsg')
-                if (listPostNode) listPostNode.style.gridTemplateColumns = '1fr'
-
-                // We take de receiver Id
-                let receiverId = v.dataset.id
-                senderArea.style.display = "block"
-                senderArea.dataset.id = receiverId
-
-                // We remove the notification
-                console.log("notif avant : ", notificatedPerson)
-
-                for (let i = 0; i < notificatedPerson.length; i++) {
-                    const idPers = notificatedPerson[i];
-                    if (idPers == receiverId) {
-                        notificatedPerson.splice(i,1)  
-                        i--
+            if (v.dataset.id != ownId) {
+                v.addEventListener('click', async () => {
+                    // Un peu de mise en forme s'impose
+                    sectionNode.style.cssText += 'width: 340px; transition: 200ms linear;'
+                    this.classList.add('chatMsg')
+                    if (listPostNode) listPostNode.style.gridTemplateColumns = '1fr'
+    
+                    // We take de receiver Id
+                    let receiverId = v.dataset.id
+                    senderArea.style.display = "block"
+                    senderArea.dataset.id = receiverId
+    
+                    // We remove the notification
+                    for (let i = 0; i < notificatedPerson.length; i++) {
+                        const idPers = notificatedPerson[i];
+                        if (idPers == receiverId) {
+                            notificatedPerson.splice(i, 1)
+                            i--
+                        }
                     }
-                }
-                console.log("notif apres : ", notificatedPerson)
-
-                /* const notifSpan = v.querySelector('.o')
-                if (notifSpan) notifSpan.classList.remove('o') */
-
-                try {
-                    // We take the value of form
-                    const formData = new FormData()
-                    formData.append('receiverId', receiverId)
-                    const data = await fetchesPost('chat', formData)
-
-                    // Here we handle the message
-                    if (data.Conversation !== null) {
-                        let you = v.textContent
-                        let me = document.querySelector('#ownerUsername').textContent
-                        let tabMsg = data.Conversation.map((msg) => {
-                            console.log("msg.Receiver_id : ", msg.Receiver_id, "msg.Sender_id : ", msg.Sender_id)
-                            if (msg.Receiver_id == receiverId) {
-                                return [msg.Message_id, `<div class="message-content s"><span>${me}</span><p>${msg.Content}</p><span>${msg.Date_Creation}</span></div>`]
-                            }
-                            return [msg.Message_id, `<div class="message-content r"><span>${you}</span><p>${msg.Content}</p><span>${msg.Date_Creation}</span></div>`]
-                        })
-                        // Tri du tableau de message selon l'id des messages
-                        tabMsg.sort((a, b) => a[0] - b[0]);
-                        tabMessManager.set(tabMsg)
-
-                        let partFactor = 1
-                        let latest = tabMessManager.get().slice(-10 * partFactor, tabMessManager.get().length)
-
-                        // Affichage des messages contenus dans le tableau latest
-                        msgArea.innerHTML = `${latest.map((msg) => {
-                            return msg[1]
-                        }).join('')}`
-                        msgArea.scrollTo(0, msgArea.scrollHeight)
-
-                        let started = false
-                        msgArea.addEventListener('scroll', () => {
-                            if (msgArea.scrollTop == 0 && msgArea.scrollHeight >= msgArea.clientHeight + 10 && started == false) {
-                                started = true
-                                idTimeoutScroll = setTimeout(() => {
-                                    partFactor += 1
-                                    let firstPos = msgArea.scrollHeight
-                                    latest = tabMessManager.get().slice(-10 * partFactor, tabMessManager.get().length)
-                                    // Affichage des messages contenus dans le tableau
-                                    msgArea.innerHTML = `${latest.map((msg) => {
-                                        return msg[1]
-                                    }).join('')}`
-                                    let finalPos = msgArea.scrollHeight - firstPos
-                                    msgArea.scrollTo(0, finalPos)
-                                    started = false
-                                }, 1000)
-                            }
-                        })
-                    } else {
-                        msgArea.innerHTML = ``
+    
+                    try {
+                        // We take the value of form
+                        const formData = new FormData()
+                        formData.append('receiverId', receiverId)
+                        const data = await fetchesPost('chat', formData)
+    
+                        // Here we handle the message
+                        if (data.Conversation !== null) {
+                            let you = v.textContent
+                            let me = document.querySelector('#ownerUsername').textContent
+                            let tabMsg = data.Conversation.map((msg) => {
+                                console.log("msg.Receiver_id : ", msg.Receiver_id, "msg.Sender_id : ", msg.Sender_id)
+                                if (msg.Receiver_id == receiverId) {
+                                    return [msg.Message_id, `<div class="message-content s"><span>${me}</span><p>${msg.Content}</p><span>${msg.Date_Creation}</span></div>`]
+                                }
+                                return [msg.Message_id, `<div class="message-content r"><span>${you}</span><p>${msg.Content}</p><span>${msg.Date_Creation}</span></div>`]
+                            })
+                            // Tri du tableau de message selon l'id des messages
+                            tabMsg.sort((a, b) => a[0] - b[0]);
+                            tabMessManager.set(tabMsg)
+    
+                            let partFactor = 1
+                            let latest = tabMessManager.get().slice(-10 * partFactor, tabMessManager.get().length)
+    
+                            // Affichage des messages contenus dans le tableau latest
+                            msgArea.innerHTML = `${latest.map((msg) => {
+                                return msg[1]
+                            }).join('')}`
+                            msgArea.scrollTo(0, msgArea.scrollHeight)
+    
+                            let started = false
+                            msgArea.addEventListener('scroll', () => {
+                                if (msgArea.scrollTop == 0 && msgArea.scrollHeight >= msgArea.clientHeight + 10 && started == false) {
+                                    started = true
+                                    idTimeoutScroll = setTimeout(() => {
+                                        partFactor += 1
+                                        let firstPos = msgArea.scrollHeight
+                                        latest = tabMessManager.get().slice(-10 * partFactor, tabMessManager.get().length)
+                                        // Affichage des messages contenus dans le tableau
+                                        msgArea.innerHTML = `${latest.map((msg) => {
+                                            return msg[1]
+                                        }).join('')}`
+                                        let finalPos = msgArea.scrollHeight - firstPos
+                                        msgArea.scrollTo(0, finalPos)
+                                        started = false
+                                    }, 1000)
+                                }
+                            })
+                        } else {
+                            msgArea.innerHTML = ``
+                        }
+                        const navNode = document.querySelector('#chatBox .nav-bar a')
+                        navNode.textContent = `${v.textContent}`
+                        navNode.dataset.id = v.dataset.id
+                        closeBtn.innerHTML = `<i class="fa-solid fa-arrow-right"></i>`
+                    } catch (error) {
+                        console.error('Erreur : ', error)
                     }
-                    const navNode = document.querySelector('#chatBox .nav-bar a')
-                    navNode.textContent = `${v.textContent}`
-                    navNode.dataset.id = v.dataset.id
-                } catch (error) {
-                    console.error('Erreur : ', error)
-                }
-            })
+                })
+            }
 
         })
 
@@ -202,6 +201,7 @@ export class customChat extends HTMLElement {
         senderIcone.addEventListener('click', async () => {
             if (sendInput.value !== "") {
                 let me = document.querySelector('#ownerUsername').textContent
+                await fetches('home')
                 try {
                     socketManager.get().send(sendInput.value + "\n" + senderArea.dataset.id)
                     let divMsg = `<div class="message-content s"><span>${me}</span><p>${sendInput.value}</p><span>${new Date().toISOString()}</span></div>`

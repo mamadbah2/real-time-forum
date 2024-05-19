@@ -1,4 +1,4 @@
-import { updateURL } from "../../utils.js"
+
 import { CommentForm } from "./CommentForm.js"
 import { DetailPost } from "./DetailPost.js"
 

@@ -23,7 +23,7 @@ export class customHeader extends HTMLElement {
                         <a>POST  <i class="fa-solid fa-arrow-up-from-bracket"></i></a>
                     </span>
                     <span id="logout">
-                        <a style="color:white">Logout</a>
+                        <a>Logout <i class="fa-solid fa-share-from-square"></i></a>
                     </span>
                 </nav>
             </div>
@@ -34,7 +34,6 @@ export class customHeader extends HTMLElement {
         const data = await fetches('home')
         const online = this.querySelector('#online')
         const logout = this.querySelector('#logout')
-        logout.style.background = 'red'
         disconnectedManager.setState(data.Disconnected) // Cela gere l'etat de connexion au niveau du front
         if (data.Disconnected) {
             online.innerHTML = `
@@ -44,11 +43,12 @@ export class customHeader extends HTMLElement {
             logout.innerHTML = `<a style="color:white" href="">Login</a>`;
         } else {
             online.innerHTML = `
-            <h4>${data.UserInfo.Email} </h4>
+            <p><strong>Mail </strong> <span class="connected">${data.UserInfo.Email}</span></p>
             <p><strong>Username </strong> <span class="connected">${data.UserInfo.Username}</span></p>
             <p><strong>Gender </strong> <span class="connected">${data.UserInfo.Gender}</span></p>
             <p><strong>Lastname </strong> <span class="connected">${data.UserInfo.Firstname}</span></p>
             <p><strong>Firstname </strong> <span class="connected">${data.UserInfo.Lastname}</span></p>
+            <p><strong>Age </strong> <span class="connected">${data.UserInfo.Age}</span></p>
             <p id="ownerId" style="display:none">${data.UserInfo.User_id} </p>
             <p id="ownerUsername" style="display:none">${data.UserInfo.Username} </p>
             `;

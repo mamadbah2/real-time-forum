@@ -21,10 +21,11 @@ export class PostForm extends HTMLElement {
     renderForm() {
         this.innerHTML = `
             <main id="createMain">
+                
+                <form id="post-form" method="post" enctype="multipart/form-data">
                 <button id="comeBack">
                 <i class="fa-solid fa-xmark"></i>
                 </button>
-                <form id="post-form" method="post" enctype="multipart/form-data">
                 <h5 class="Error"></h5>
                     <div class="checkCategory">
 
@@ -37,7 +38,6 @@ export class PostForm extends HTMLElement {
                             <h3>Upload Image</h3>
                             <p>Image size must be less than <span>20MB</span></p>
                         </div>
-                        <button class="select-image">upload</button>
                     </div>
                     <!-- upload-img -->
                     <div id="area-text">
@@ -51,7 +51,6 @@ export class PostForm extends HTMLElement {
     }
 
     #makeEventListener() {
-        const selectImage = this.querySelector('.select-image');
         const inputFile = this.querySelector('#file');
         const imgArea = this.querySelector('.img-area');
         const btnBack = this.querySelector('#comeBack');
@@ -94,7 +93,7 @@ export class PostForm extends HTMLElement {
         })
 
         // Previsionnage de l'image
-        selectImage.addEventListener('click', function (event) {
+        imgArea.addEventListener('click', function (event) {
             event.preventDefault();
             inputFile.click();
         })

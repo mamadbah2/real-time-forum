@@ -4,7 +4,6 @@ export class FilterForm extends HTMLElement {
     connectedCallback() {
         this.constructForm();
         this.filterInformation();
-        this.#makeEventListener();
     }
 
     async filterInformation() {
@@ -13,51 +12,60 @@ export class FilterForm extends HTMLElement {
             <input type="checkbox" name="filterCategoryCheck" id=${category.Name} value=${category.Name}>
             <span>${category.Name}</span>
         </label>`).join('')}`;
+        this.#makeEventListener();
+
     }
 
     #makeEventListener() {
-        const formFilterSubmit = document.querySelector('#bar-filter form input[name="filter"]');
-        formFilterSubmit.addEventListener('click', (e) => {
-            e.preventDefault();
+        // Récupérer toutes les cases à cocher de la catégorie
+        const checkCategories = document.querySelectorAll('#bar-filter .checkCategory input[type="checkbox"]');
 
-            // Reinitialision de tous les posts
-            document.querySelector('custom-posts').remove();
+        // Fonction de filtrage
+        function filterPosts() {
+            // Réinitialisation de tous les posts
+            const customPostsContainer = document.querySelector('custom-posts');
+            if (customPostsContainer) {
+                customPostsContainer.remove();
+            }
             const customPosts = document.createElement('custom-posts');
             customPosts.style.display = 'none';
             document.querySelector('custom-home').appendChild(customPosts);
 
-            // Recuperation des valeurs du form
-            const checkCategory = document.querySelectorAll('#bar-filter .checkCategory label');
-            // Traitement des valeurs du form en différé
+            // Récupération des valeurs du formulaire
             setTimeout(() => {
                 const listPostElt = document.querySelector('#list-post');
-                console.log(listPostElt.innerHTML);
-                const posts = listPostElt.querySelectorAll('.post');
-                listPostElt.innerHTML = '';
-                console.log(posts);
-                let statusCheck = false;
-                checkCategory.forEach((categoryNode) => {
-                    if (categoryNode.querySelector('input').checked) {
-                        statusCheck = true;
-                        posts.forEach(post => {
-                            let textCategory = Array.from(post.querySelectorAll('.hcontent ul li')).reduce((acc, node) => {
-                                return acc + node.textContent;
-                            }, '');
-                            if (textCategory.includes(categoryNode.getAttribute('for'))) {
-                                listPostElt.appendChild(post);
+                if (listPostElt) {
+                    const posts = listPostElt.querySelectorAll('.post');
+                    listPostElt.innerHTML = '';
+                    let statusCheck = false;
+                    checkCategories.forEach((categoryCheckbox) => {
+                        if (categoryCheckbox.checked) {
+                            statusCheck = true;
+                            posts.forEach(post => {
+                                let textCategory = Array.from(post.querySelectorAll('.hcontent ul li')).reduce((acc, node) => {
+                                    return acc + node.textContent;
+                                }, '');
+                                if (textCategory.includes(categoryCheckbox.value)) {
+                                    listPostElt.appendChild(post);
+                                }
+                            });
+                        }
+                    });
 
-                            }
-                        });
+                    if (!statusCheck) {
+                        listPostElt.parentElement.remove();
+                        document.querySelector('custom-home').appendChild(document.createElement('custom-posts'));
                     }
-                });
-
-                if (!statusCheck) {
-                    listPostElt.parentElement.remove();
-                    document.querySelector('custom-home').appendChild(document.createElement('custom-posts'));
+                    customPosts.style.display = 'block';
                 }
-                customPosts.style.display = 'block';
             }, 500);
+        }
+
+        // Ajouter des écouteurs d'événements 'change' à chaque case à cocher
+        checkCategories.forEach((checkbox) => {
+            checkbox.addEventListener('change', filterPosts);
         });
+
     }
 
     constructForm() {
@@ -67,7 +75,6 @@ export class FilterForm extends HTMLElement {
                     <div class="checkCategory">
 
                     </div>
-                    <input type="submit" name="filter" value="valid">
                 </form>
             </div>
         `;

@@ -1,4 +1,4 @@
-import { fetchesPost, socketManager, updateURL } from "../../utils.js";
+import { fetchesPost, socketManager} from "../../utils.js";
 
 export class customRegister extends HTMLElement {
     connectedCallback() {

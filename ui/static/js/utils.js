@@ -110,18 +110,10 @@ export const socketManager = {
                     }
                 } else if (msgArea.querySelector('.list-user') != null) {
                     notificatedPerson.push(parseInt(ids[1]))
-                    const div = msgArea.querySelector(`div[data-id='${ids[1]}']`)
-                    
-                    const cloneDiv = document.createElement(`div`)
-                    cloneDiv.innerHTML = div.innerHTML
-                    cloneDiv.dataset.id = `${ids[1]}`
-                    cloneDiv.className='list-user'
-                    msgArea.insertBefore(cloneDiv, msgArea.firstChild)
-                    div.remove()
-                    setTimeout(() => {
-                        const span = msgArea.querySelector(`div[data-id='${ids[1]}'] span`)
-                        span.className ='o'
-                    }, 400);
+                    const customSection = document.querySelector('custom-section')
+                    const customChat = document.querySelector('custom-chat')
+                    customChat.remove()
+                    customSection.insertBefore( document.createElement('custom-chat'), customSection.firstChild)
                 }
             }
 
@@ -139,25 +131,17 @@ export const disconnectedManager = {
     }
 }
 
-// Update the URL when the user clicks on a page
-export function updateURL(pageName) {
-    console.log(pageName)
-    /* var newURL = window.location.origin + '/' + pageName;
-    window.history.pushState({ page: pageName }, null, newURL); */
-}
-
-// En cas de reactualisation du navigateur
-/* window.addEventListener('beforeunload', async (e) => {
-    e.preventDefault()
-    await fetches('logout')
-}) */
-
 export async function fetches(page) {
     const response = await fetch(`http://localhost:4000/${page}`, { method: "GET" })
     if (!response.ok) {
         throw new Error("Erreur lors de la récupération des données")
     }
     const data = await response.json()
+    if (data.Disconnected) {
+        document.querySelector('body').innerHTML = `<div id="website"></div>
+        <custom-login></custom-login>`;
+            disconnectedManager.setState(true)
+    }
     return data
 }
 
@@ -191,6 +175,15 @@ export async function fetchesPost(page, formData, enctyped = false) {
     }
 
     let data = response.json()
+
+    // for check disconnection
+    let value = await data
+    if (value.Disconnected) {
+        document.querySelector('body').innerHTML = `<div id="website"></div>
+        <custom-login></custom-login>`;
+            disconnectedManager.setState(true)
+    }
+    
     return data
 }
 
