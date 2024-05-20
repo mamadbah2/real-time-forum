@@ -614,7 +614,16 @@ func (app *application) logout(w http.ResponseWriter, r *http.Request) {
 		for i, client := range Clients {
 			if client.idClient == app.Session[cookie.Value] {
 				Clients = append(Clients[:i], Clients[i+1:]...)
+				for _, cl := range Clients {
+					err := cl.Conn.WriteMessage(websocket.TextMessage, []byte("&&"+ strconv.Itoa(client.idClient) +"&&"))
+					if err != nil {
+						// app.serverError(w, r, err)
+						app.errorLog.Println(err)
+						return
+					}
+				}
 				app.infoLog.Println("Le client ", client, " a ete remove")
+				break
 			}
 		}
 		delete(app.Session, cookie.Value)

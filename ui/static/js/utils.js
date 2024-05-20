@@ -37,19 +37,44 @@ export const socketManager = {
             const msgArea = document.querySelector('#chatBox .container .messages-area')
 
             // Decryptage de la reponse du server voir si c'est la first connection
-            if (/##(.*?)##/g.test(e.data)) {
+
+            if (/&&(.*?)&&/g.test(e.data)) { // S'il est deconnecté
+                let text = e.data
+                let id = text.match(/&&(.*?)&&/)[1]
+                console.log('id :>> ', id);
+                for (let i = 0; i < connectedPerson.length; i++) {
+                    if (connectedPerson[i] == parseInt(id)) {
+                        connectedPerson.splice(i, 1)
+                        break
+                    }
+                }
+                console.log("Connected Pers : ", connectedPerson);
+                // Reactualisation
+                if (document.querySelector('.list-user')) {
+                    const customSection = document.querySelector('custom-section')
+                    const customChat = document.querySelector('custom-chat')
+                    customChat.remove()
+                    customSection.insertBefore(document.createElement('custom-chat'), customSection.firstChild)
+                }
+
+            } else if (/##(.*?)##/g.test(e.data)) { // Si la personne est connecté
                 let text = e.data
                 let serie = text.match(/##(.*?)##/)[1]
                 if (/^(\d+)(?:-\d+)*$/g.test(serie)) {
                     connectedPerson = serie.split('-').map(Number)
                     console.log("Connected Pers : ", connectedPerson);
-
+                    // Reactualisation
+                    if (document.querySelector('.list-user')) {
+                        const customSection = document.querySelector('custom-section')
+                        const customChat = document.querySelector('custom-chat')
+                        customChat.remove()
+                        customSection.insertBefore(document.createElement('custom-chat'), customSection.firstChild)
+                    }
                 }
 
             } else if (/==(.*?)==/g.test(e.data)) { // Decryptage de la reponse du server voir le typing progr.
                 let text = e.data
                 let serie = text.match(/==(.*?)==/)[1]
-                console.log(serie)
                 if (msgArea != null) {
                     if (msgArea.querySelector('.list-user') == null) {
                         const navNode = document.querySelector('#chatBox .nav-bar a');
@@ -113,7 +138,7 @@ export const socketManager = {
                     const customSection = document.querySelector('custom-section')
                     const customChat = document.querySelector('custom-chat')
                     customChat.remove()
-                    customSection.insertBefore( document.createElement('custom-chat'), customSection.firstChild)
+                    customSection.insertBefore(document.createElement('custom-chat'), customSection.firstChild)
                 }
             }
 
@@ -140,7 +165,7 @@ export async function fetches(page) {
     if (data.Disconnected) {
         document.querySelector('body').innerHTML = `<div id="website"></div>
         <custom-login></custom-login>`;
-            disconnectedManager.setState(true)
+        disconnectedManager.setState(true)
     }
     return data
 }
@@ -181,9 +206,9 @@ export async function fetchesPost(page, formData, enctyped = false) {
     if (value.Disconnected) {
         document.querySelector('body').innerHTML = `<div id="website"></div>
         <custom-login></custom-login>`;
-            disconnectedManager.setState(true)
+        disconnectedManager.setState(true)
     }
-    
+
     return data
 }
 
