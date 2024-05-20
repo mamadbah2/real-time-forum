@@ -11,6 +11,8 @@ export class SectionFoot extends HTMLElement {
     
         <custom-chat></custom-chat>
 
+        
+
         <div>
             <h4>Copyrigths <code>&#169;</code></h4>
             <p>

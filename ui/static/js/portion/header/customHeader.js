@@ -17,7 +17,7 @@ export class customHeader extends HTMLElement {
                 <div id="online">
 
                 </div>
-
+                <custom-duplicata></custom-duplicata>
                 <nav>
                     <span id="postcreate">
                         <a>POST  <i class="fa-solid fa-arrow-up-from-bracket"></i></a>

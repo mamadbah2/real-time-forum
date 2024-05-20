@@ -34,7 +34,7 @@ export const socketManager = {
             console.log("Message entrant : ", e.data)
             let trace = e.data.split('\n')
             let ids = trace[trace.length - 1].split('-')
-            const msgArea = document.querySelector('#chatBox .container .messages-area')
+            const msgArea = document.querySelector('custom-chat #chatBox .container .messages-area')
 
             // Decryptage de la reponse du server voir si c'est la first connection
 
@@ -50,11 +50,21 @@ export const socketManager = {
                 }
                 console.log("Connected Pers : ", connectedPerson);
                 // Reactualisation
-                if (document.querySelector('.list-user')) {
+                const customHeader = document.querySelector('custom-header #haut')
+                const customDuplicata = document.querySelector('custom-duplicata')
+                customDuplicata.remove()
+                customHeader.insertBefore(document.createElement('custom-duplicata'), customHeader.lastChild)
+                // document.querySelector('custom-duplicata').style.visibility = 'visible'
+
+
+                if (document.querySelector('custom-chat .list-user')) {
                     const customSection = document.querySelector('custom-section')
                     const customChat = document.querySelector('custom-chat')
                     customChat.remove()
                     customSection.insertBefore(document.createElement('custom-chat'), customSection.firstChild)
+                } else {
+                    // document.querySelector('custom-duplicata').style.visibility = 'visible'
+
                 }
 
             } else if (/##(.*?)##/g.test(e.data)) { // Si la personne est connecté
@@ -64,11 +74,19 @@ export const socketManager = {
                     connectedPerson = serie.split('-').map(Number)
                     console.log("Connected Pers : ", connectedPerson);
                     // Reactualisation
-                    if (document.querySelector('.list-user')) {
+                    const customHeader = document.querySelector('custom-header #haut')
+                    const customDuplicata = document.querySelector('custom-duplicata')
+                    customDuplicata.remove()
+                    customHeader.insertBefore(document.createElement('custom-duplicata'), customHeader.lastChild)
+
+
+                    if (document.querySelector('custom-chat .list-user')) {
                         const customSection = document.querySelector('custom-section')
                         const customChat = document.querySelector('custom-chat')
                         customChat.remove()
                         customSection.insertBefore(document.createElement('custom-chat'), customSection.firstChild)
+                    } else {
+                        // document.querySelector('custom-duplicata').style.visibility = 'visible' 
                     }
                 }
 
@@ -77,7 +95,7 @@ export const socketManager = {
                 let serie = text.match(/==(.*?)==/)[1]
                 if (msgArea != null) {
                     if (msgArea.querySelector('.list-user') == null) {
-                        const navNode = document.querySelector('#chatBox .nav-bar a');
+                        const navNode = document.querySelector('custom-chat #chatBox .nav-bar a');
                         let trueId = navNode.dataset.id
                         let you = navNode.textContent
                         if (ids[1] == parseInt(trueId)) {
@@ -122,7 +140,7 @@ export const socketManager = {
                     notificatedPerson.push(ids[1])
                     console.log("notifPers", notificatedPerson)
                 } else if (msgArea.querySelector('.list-user') == null) {
-                    const navNode = document.querySelector('#chatBox .nav-bar a')
+                    const navNode = document.querySelector('custom-chat #chatBox .nav-bar a')
                     let trueId = navNode.dataset.id
                     let you = navNode.textContent
                     if (parseInt(trueId) == ids[1]) {
