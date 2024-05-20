@@ -63,7 +63,7 @@ go run ./cmd/web/.
 ```
 
 ## Captures d'écran
-![Screenshot 1](ui/img/sreen.png)
+![Screenshot 1](ui/static/img/sreen.png)
 
 ## Structure
 
