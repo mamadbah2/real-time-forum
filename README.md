@@ -63,8 +63,7 @@ go run ./cmd/web/.
 ```
 
 ## Captures d'écran
-![Screenshot 1](ui/img/Screenshot from 2024-05-20 04-55-41)
-
+![Screenshot 1](ui/img/sreen.png)
 
 ## Structure
 
