@@ -17,7 +17,7 @@ export class customRegister extends HTMLElement {
             <span><a href="">t'as déjà un compte ?</a></span>
         </div>
         <input class="input" name="nickname" placeholder="Nickname" type="text" required>
-        <input class="input" name="age" placeholder="Age" type="date" required>
+        <input class="input" name="age" placeholder="Age" type="number" required min="1" step="1">
         <select class="input" name="gender" required>
             <option value=""><em>Select Gender</em></option>
             <option value="male">Male</option>

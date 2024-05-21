@@ -48,6 +48,7 @@ export class customHeader extends HTMLElement {
             <p><strong>Gender </strong> <span class="connected">${data.UserInfo.Gender}</span></p>
             <p><strong>Lastname </strong> <span class="connected">${data.UserInfo.Firstname}</span></p>
             <p><strong>Firstname </strong> <span class="connected">${data.UserInfo.Lastname}</span></p>
+            <p><strong>Age </strong> <span class="connected">${data.UserInfo.Age}</span></p>
             <p id="ownerId" style="display:none">${data.UserInfo.User_id} </p>
             <p id="ownerUsername" style="display:none">${data.UserInfo.Username} </p>
             `;
